@@ -1,9 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:task/pages/home_page.dart';
 import 'package:task/util/task_provider.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  SystemChrome.setSystemUIOverlayStyle(
+    SystemUiOverlayStyle(
+      statusBarColor: Colors.white,
+      statusBarIconBrightness: Brightness.dark,
+      systemNavigationBarColor: Colors.white, // For navigation bar
+      systemNavigationBarIconBrightness:
+          Brightness.dark, // For navigation bar icons
+    ),
+  );
   runApp(MyApp());
 }
 

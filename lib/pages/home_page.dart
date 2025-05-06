@@ -50,7 +50,7 @@ class _HomePageState extends State<HomePage> {
                   margin: EdgeInsets.only(left: 20, top: 10, right: 20),
                   height: 70,
                   alignment: Alignment.center,
-                  padding: EdgeInsets.symmetric(horizontal: 5),
+                  padding: EdgeInsets.only(left: 10),
                   child: ListTile(
                     title: Text(
                       "${task.title}",
@@ -73,22 +73,69 @@ class _HomePageState extends State<HomePage> {
                         builder:
                             (context) => AlertDialog(
                               title: Text("Want to delete?"),
-                              content: Text(
-                                "are you sure to delete ${task.title}",
+                              content: ConstrainedBox(
+                                constraints: BoxConstraints(
+                                  maxHeight:
+                                      MediaQuery.of(context).size.height * 0.7,
+                                ),
+                                child: RichText(
+                                  overflow: TextOverflow.clip,
+                                  text: TextSpan(
+                                    children: [
+                                      TextSpan(
+                                        text: 'Are you sure to delete: ',
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color:
+                                              Theme.of(
+                                                context,
+                                              ).colorScheme.scrim,
+                                        ),
+                                      ),
+                                      TextSpan(
+                                        text: '${task.title}',
+                                        style: TextStyle(
+                                          color:
+                                              Theme.of(
+                                                context,
+                                              ).colorScheme.onSurface,
+                                        ),
+                                      ),
+                                      TextSpan(
+                                        text:
+                                            task.isDone
+                                                ? ' (already complicated)'
+                                                : '',
+                                        style: TextStyle(
+                                          color:
+                                              Theme.of(
+                                                context,
+                                              ).colorScheme.secondary,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
                               ),
                               actions: [
-                                FilledButton.tonal(
-                                  onPressed: () {
-                                    Navigator.pop(context);
-                                  },
-                                  child: Text("Cancle"),
+                                SizedBox(
+                                  height: 40,
+                                  child: FilledButton.tonal(
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    },
+                                    child: Text("Cancle"),
+                                  ),
                                 ),
-                                FilledButton(
-                                  onPressed: () {
-                                    taskModel.deleteTasks(index);
-                                    Navigator.pop(context);
-                                  },
-                                  child: Text("Delete"),
+                                SizedBox(
+                                  height: 40,
+                                  child: FilledButton(
+                                    onPressed: () {
+                                      taskModel.deleteTasks(index);
+                                      Navigator.pop(context);
+                                    },
+                                    child: Text("Delete"),
+                                  ),
                                 ),
                               ],
                             ),
@@ -100,6 +147,7 @@ class _HomePageState extends State<HomePage> {
             ),
       ),
       floatingActionButton: FloatingActionButton(
+        elevation: 0,
         onPressed: () {
           showDialog(
             barrierDismissible: false,
