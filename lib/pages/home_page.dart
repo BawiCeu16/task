@@ -36,8 +36,11 @@ class _HomePageState extends State<HomePage> {
         backgroundColor: Theme.of(context).colorScheme.onPrimary,
       ),
       body: Consumer<TaskProvider>(
-        builder:
-            (context, taskModel, _) => ListView.builder(
+        builder: (context, taskModel, _) {
+          if (taskModel.tasksList.isEmpty) {
+            return Center(child: Text("Add some Task!"));
+          } else {
+            return ListView.builder(
               itemCount: taskModel.tasksList.length,
               physics: BouncingScrollPhysics(),
               itemBuilder: (context, index) {
@@ -104,7 +107,7 @@ class _HomePageState extends State<HomePage> {
                                       TextSpan(
                                         text:
                                             task.isDone
-                                                ? ' (already complicated)'
+                                                ? ' (already completed)'
                                                 : '',
                                         style: TextStyle(
                                           color:
@@ -144,7 +147,9 @@ class _HomePageState extends State<HomePage> {
                   ),
                 );
               },
-            ),
+            );
+          }
+        },
       ),
       floatingActionButton: FloatingActionButton(
         elevation: 0,
