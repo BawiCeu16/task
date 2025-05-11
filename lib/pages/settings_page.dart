@@ -1,0 +1,163 @@
+import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+
+class SettingsPage extends StatelessWidget {
+  const SettingsPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text("Settings")),
+      body: Column(
+        children: [
+          Expanded(
+            child: SizedBox(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(height: 20),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 25),
+                    child: Text(
+                      "Settings",
+                      style: Theme.of(context).textTheme.titleMedium,
+                    ),
+                  ),
+                  SizedBox(height: 5),
+
+                  //Theme
+                  Container(
+                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 2),
+                    margin: EdgeInsets.symmetric(horizontal: 20),
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.onPrimary,
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(15),
+                        topRight: Radius.circular(15),
+                      ),
+                    ),
+
+                    child: ListTile(
+                      title: Text("Theme"),
+                      leading: Icon(Icons.palette),
+                      trailing: Icon(Icons.chevron_right),
+                    ),
+                  ),
+
+                  //
+                  Container(
+                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 2),
+                    margin: EdgeInsets.symmetric(horizontal: 20),
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.onPrimary,
+                      borderRadius: BorderRadius.only(
+                        // topLeft: Radius.circular(15),
+                        // topRight: Radius.circular(15),
+                      ),
+                    ),
+
+                    child: ListTile(
+                      title: Text("Text Size"),
+                      leading: Icon(Icons.text_fields),
+                    ),
+                  ),
+
+                  //
+                  Container(
+                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 2),
+                    margin: EdgeInsets.symmetric(horizontal: 20),
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.onPrimary,
+                      borderRadius: BorderRadius.only(
+                        bottomLeft: Radius.circular(15),
+                        bottomRight: Radius.circular(15),
+                      ),
+                    ),
+
+                    child: ListTile(
+                      title: Text(
+                        "Clear Data",
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.error,
+                        ),
+                      ),
+                      leading: Icon(
+                        Icons.delete,
+                        color: Theme.of(context).colorScheme.error,
+                      ),
+                    ),
+                  ),
+
+                  //links////////////////////////////////////////////////////////////////////////////////////
+                  SizedBox(height: 20),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 25),
+                    child: Text(
+                      "More",
+                      style: Theme.of(context).textTheme.titleMedium,
+                    ),
+                  ),
+                  SizedBox(height: 5),
+
+                  //Github
+                  Container(
+                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 2),
+                    margin: EdgeInsets.symmetric(horizontal: 20),
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.onPrimary,
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(15),
+                        topRight: Radius.circular(15),
+                      ),
+                    ),
+
+                    child: ListTile(
+                      title: Text("Github"),
+                      leading: Icon(FontAwesomeIcons.github),
+                    ),
+                  ),
+                  //Email
+                  Container(
+                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 2),
+                    margin: EdgeInsets.symmetric(horizontal: 20),
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.onPrimary,
+                      borderRadius: BorderRadius.only(
+                        // topLeft: Radius.circular(15),
+                        // topRight: Radius.circular(15),
+                      ),
+                    ),
+
+                    child: ListTile(
+                      title: Text("Email"),
+                      leading: Icon(Icons.email),
+                    ),
+                  ),
+                  //Info
+                  Container(
+                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 2),
+                    margin: EdgeInsets.symmetric(horizontal: 20),
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.onPrimary,
+                      borderRadius: BorderRadius.only(
+                        bottomLeft: Radius.circular(15),
+                        bottomRight: Radius.circular(15),
+                      ),
+                    ),
+
+                    child: ListTile(
+                      title: Text("Info"),
+                      leading: Icon(Icons.info),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          InkWell(child: Text("privacy . policy"), onTap: () {}),
+          SizedBox(height: 5),
+        ],
+      ),
+    );
+  }
+}

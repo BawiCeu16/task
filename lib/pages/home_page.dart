@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:task/pages/settings_page.dart';
 import 'package:task/util/task_provider.dart';
 
 class HomePage extends StatefulWidget {
@@ -30,10 +31,22 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.onPrimary,
       appBar: AppBar(
         title: Text("task"),
-        backgroundColor: Theme.of(context).colorScheme.onPrimary,
+        actions: [
+          IconButton(
+            tooltip: 'Setting',
+            onPressed: () {
+              Navigator.push(
+                context,
+
+                MaterialPageRoute(builder: (context) => SettingsPage()),
+              );
+            },
+            icon: Icon(Icons.settings),
+          ),
+          SizedBox(width: 5),
+        ],
       ),
       body: Consumer<TaskProvider>(
         builder: (context, taskModel, _) {
@@ -41,19 +54,29 @@ class _HomePageState extends State<HomePage> {
             return Center(child: Text("Add some Task!"));
           } else {
             return ListView.builder(
+              padding: EdgeInsets.only(
+                bottom:
+                    MediaQuery.of(context).size.height *
+                    0.1, // 10% of screen height
+              ),
               itemCount: taskModel.tasksList.length,
               physics: BouncingScrollPhysics(),
               itemBuilder: (context, index) {
                 final task = taskModel.tasksList[index];
                 return Container(
                   decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.onInverseSurface,
                     borderRadius: BorderRadius.circular(10),
+                    color: Theme.of(context).colorScheme.onPrimary,
                   ),
                   margin: EdgeInsets.only(left: 20, top: 10, right: 20),
-                  height: 70,
+
                   alignment: Alignment.center,
-                  padding: EdgeInsets.only(left: 10),
+                  padding: EdgeInsets.only(
+                    left: 15,
+                    top: 10,
+                    right: 10,
+                    bottom: 10,
+                  ),
                   child: ListTile(
                     title: Text(
                       "${task.title}",
@@ -81,43 +104,9 @@ class _HomePageState extends State<HomePage> {
                                   maxHeight:
                                       MediaQuery.of(context).size.height * 0.7,
                                 ),
-                                child: RichText(
-                                  overflow: TextOverflow.clip,
-                                  text: TextSpan(
-                                    children: [
-                                      TextSpan(
-                                        text: 'Are you sure to delete: ',
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          color:
-                                              Theme.of(
-                                                context,
-                                              ).colorScheme.scrim,
-                                        ),
-                                      ),
-                                      TextSpan(
-                                        text: '${task.title}',
-                                        style: TextStyle(
-                                          color:
-                                              Theme.of(
-                                                context,
-                                              ).colorScheme.onSurface,
-                                        ),
-                                      ),
-                                      TextSpan(
-                                        text:
-                                            task.isDone
-                                                ? ' (already completed)'
-                                                : '',
-                                        style: TextStyle(
-                                          color:
-                                              Theme.of(
-                                                context,
-                                              ).colorScheme.secondary,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
+                                child: Text(
+                                  "Are you sure to delete: ${task.title} ${task.isDone ? "(already done)" : ''}",
+                                  style: Theme.of(context).textTheme.bodyLarge,
                                 ),
                               ),
                               actions: [
