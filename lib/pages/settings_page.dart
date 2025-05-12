@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:task/pages/info_page.dart';
+import 'package:url_launcher/link.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final githubUri = Uri.parse("https://github.com/BawiCeu16");
     return Scaffold(
       appBar: AppBar(title: Text("Settings")),
       body: Column(
@@ -41,6 +45,10 @@ class SettingsPage extends StatelessWidget {
                       title: Text("Theme"),
                       leading: Icon(Icons.palette),
                       trailing: Icon(Icons.chevron_right),
+                      onTap:
+                          () => ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text("wait for next Update")),
+                          ),
                     ),
                   ),
 
@@ -59,6 +67,10 @@ class SettingsPage extends StatelessWidget {
                     child: ListTile(
                       title: Text("Text Size"),
                       leading: Icon(Icons.text_fields),
+                      onTap:
+                          () => ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text("wait for next Update")),
+                          ),
                     ),
                   ),
 
@@ -85,6 +97,10 @@ class SettingsPage extends StatelessWidget {
                         Icons.delete,
                         color: Theme.of(context).colorScheme.error,
                       ),
+                      onTap:
+                          () => ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text("wait for next Update")),
+                          ),
                     ),
                   ),
 
@@ -100,21 +116,32 @@ class SettingsPage extends StatelessWidget {
                   SizedBox(height: 5),
 
                   //Github
-                  Container(
-                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 2),
-                    margin: EdgeInsets.symmetric(horizontal: 20),
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.onPrimary,
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(15),
-                        topRight: Radius.circular(15),
-                      ),
-                    ),
+                  Link(
+                    uri: githubUri,
+                    target: LinkTarget.defaultTarget,
 
-                    child: ListTile(
-                      title: Text("Github"),
-                      leading: Icon(FontAwesomeIcons.github),
-                    ),
+                    builder: (context, openLink) {
+                      return Container(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 2,
+                        ),
+                        margin: EdgeInsets.symmetric(horizontal: 20),
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.onPrimary,
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(15),
+                            topRight: Radius.circular(15),
+                          ),
+                        ),
+
+                        child: ListTile(
+                          title: Text("Github"),
+                          leading: Icon(FontAwesomeIcons.github),
+                          onTap: openLink,
+                        ),
+                      );
+                    },
                   ),
                   //Email
                   Container(
@@ -131,6 +158,9 @@ class SettingsPage extends StatelessWidget {
                     child: ListTile(
                       title: Text("Email"),
                       leading: Icon(Icons.email),
+                      onTap: () {
+                        launchUrl(Uri.parse("mailto:bawiceu1428@gmail.com"));
+                      },
                     ),
                   ),
                   //Info
@@ -148,14 +178,18 @@ class SettingsPage extends StatelessWidget {
                     child: ListTile(
                       title: Text("Info"),
                       leading: Icon(Icons.info),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => InfoPage()),
+                        );
+                      },
                     ),
                   ),
                 ],
               ),
             ),
           ),
-          InkWell(child: Text("privacy . policy"), onTap: () {}),
-          SizedBox(height: 5),
         ],
       ),
     );
