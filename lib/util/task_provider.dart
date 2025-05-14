@@ -8,6 +8,9 @@ class TaskProvider with ChangeNotifier {
   List<TaskModel> tasksList = [];
   List<TaskModel> get _tasksList => tasksList;
 
+  bool appTheme = false;
+  bool get _appTheme => appTheme;
+
   //loadTasks
   Future<void> loadTasks() async {
     final prefs = await SharedPreferences.getInstance();
@@ -19,6 +22,7 @@ class TaskProvider with ChangeNotifier {
       List<dynamic> taskList = json.decode(tasksString);
       //put taskModel to tasksList
       tasksList = taskList.map((data) => TaskModel.fromMap(data)).toList();
+
       notifyListeners();
     }
   }

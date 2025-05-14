@@ -3,34 +3,70 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:task/pages/home_page.dart';
 import 'package:task/util/task_provider.dart';
+import 'package:task/util/theme_provider.dart'; // Add this import
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Initialize providers
+  final taskProvider = TaskProvider();
+  final themeProvider = ThemeProvider();
+
+  // Load initial data
+  await taskProvider.loadTasks();
+  await themeProvider.loadTheme();
+
+  //UI Configuration
   SystemChrome.setSystemUIOverlayStyle(
     SystemUiOverlayStyle(
-      statusBarColor: Colors.white,
-      statusBarIconBrightness: Brightness.dark,
-      systemNavigationBarColor: Colors.white, // For navigation bar
-      systemNavigationBarIconBrightness:
-          Brightness.dark, // For navigation bar icons
+      // statusBarColor: Colors.white,
+      // statusBarIconBrightness: Brightness.dark,
+      // systemNavigationBarColor: Colors.white,
+      // systemNavigationBarIconBrightness: Brightness.dark,
     ),
   );
-  runApp(MyApp());
+
+  runApp(MyApp(taskProvider: taskProvider, themeProvider: themeProvider));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final TaskProvider taskProvider;
+  final ThemeProvider themeProvider;
+
+  const MyApp({
+    super.key,
+    required this.taskProvider,
+    required this.themeProvider,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (context) => TaskProvider(),
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
-        ),
-        home: HomePage(),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider.value(value: taskProvider),
+        ChangeNotifierProvider.value(value: themeProvider),
+      ],
+      child: Consumer<ThemeProvider>(
+        builder: (context, themeProvider, child) {
+          return MaterialApp(
+            debugShowCheckedModeBanner: false,
+            theme: ThemeData(
+              colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
+              splashFactory: NoSplash.splashFactory,
+              brightness: Brightness.light, // Light theme properties
+            ),
+            darkTheme: ThemeData(
+              colorScheme: ColorScheme.fromSeed(
+                seedColor: Colors.blue,
+                brightness: Brightness.dark,
+              ),
+              splashFactory: NoSplash.splashFactory,
+              brightness: Brightness.dark, // Dark theme properties
+            ),
+            themeMode: themeProvider.themeMode,
+            home: const HomePage(),
+          );
+        },
       ),
     );
   }

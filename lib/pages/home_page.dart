@@ -11,8 +11,10 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  //textControllers
   final taskTextEditingController = TextEditingController();
 
+  //init Functions
   @override
   void initState() {
     // TODO: implement initState
@@ -21,6 +23,7 @@ class _HomePageState extends State<HomePage> {
     loadProvider.loadTasks();
   }
 
+  //dispose Functions
   @override
   void dispose() {
     // TODO: implement dispose
@@ -30,117 +33,176 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    //listControllers
+    final listController = ScrollController();
+
+    //starts of UI
     return Scaffold(
-      appBar: AppBar(
-        title: Text("task"),
-        centerTitle: true,
-        actions: [
-          IconButton(
-            tooltip: 'Setting',
-            onPressed: () {
-              Navigator.push(
-                context,
+      backgroundColor: Theme.of(context).colorScheme.surface,
+      body: SafeArea(
+        //add Consummer for Provider
+        child: Consumer<TaskProvider>(
+          builder: (context, taskModel, _) {
+            //check taskList
+            if (taskModel.tasksList.isEmpty) {
+              //show text if it was Nothing on taskList
+              return Center(child: Text("Add some Task!"));
+            } else {
+              //show This(ListViewBuilder) if it has taskList
+              return Column(
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  //SearchBar Widget
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 20,
+                      vertical: 10,
+                    ),
+                    child: SearchBar(
+                      hintText: "Search..",
+                      trailing: [
+                        IconButton(
+                          tooltip: 'Setting',
+                          onPressed: () {
+                            Navigator.push(
+                              context,
 
-                MaterialPageRoute(builder: (context) => SettingsPage()),
-              );
-            },
-            icon: Icon(Icons.settings),
-          ),
-          SizedBox(width: 5),
-        ],
-      ),
-      body: Consumer<TaskProvider>(
-        builder: (context, taskModel, _) {
-          if (taskModel.tasksList.isEmpty) {
-            return Center(child: Text("Add some Task!"));
-          } else {
-            return ListView.builder(
-              padding: EdgeInsets.only(
-                bottom:
-                    MediaQuery.of(context).size.height *
-                    0.1, // 10% of screen height
-              ),
-              itemCount: taskModel.tasksList.length,
-              physics: BouncingScrollPhysics(),
-              itemBuilder: (context, index) {
-                final task = taskModel.tasksList[index];
-                return Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    color: Theme.of(context).colorScheme.onPrimary,
-                  ),
-                  margin: EdgeInsets.only(left: 20, top: 10, right: 20),
-
-                  alignment: Alignment.center,
-                  padding: EdgeInsets.only(
-                    left: 15,
-                    top: 10,
-                    right: 10,
-                    bottom: 10,
-                  ),
-                  child: ListTile(
-                    title: Text(
-                      "${task.title}",
-                      style: TextStyle(
-                        decoration:
-                            task.isDone
-                                ? TextDecoration.lineThrough
-                                : TextDecoration.none,
+                              MaterialPageRoute(
+                                builder: (context) => SettingsPage(),
+                              ),
+                            );
+                          },
+                          icon: Icon(Icons.settings),
+                        ),
+                      ],
+                      elevation: WidgetStateProperty.all(0),
+                      backgroundColor: WidgetStateProperty.all(
+                        Theme.of(context).colorScheme.surfaceContainerHigh,
                       ),
                     ),
-                    trailing: Checkbox(
-                      value: task.isDone,
-                      onChanged: (value) {
-                        taskModel.toggleIsdone(index);
-                      },
-                    ),
-                    onLongPress: () {
-                      showDialog(
-                        context: context,
-                        builder:
-                            (context) => AlertDialog(
-                              title: Text("Want to delete?"),
-                              content: ConstrainedBox(
-                                constraints: BoxConstraints(
-                                  maxHeight:
-                                      MediaQuery.of(context).size.height * 0.7,
-                                ),
-                                child: Text(
-                                  "Are you sure to delete: ${task.title} ${task.isDone ? "(already done)" : ''}",
-                                  style: Theme.of(context).textTheme.bodyLarge,
+                  ),
+
+                  //ListViewBuilder Widget
+                  Expanded(
+                    child: ListView.builder(
+                      //listCOntroller
+                      controller: listController,
+
+                      //padding the List for bottom for FloatingButton
+                      padding: EdgeInsets.only(
+                        bottom:
+                            MediaQuery.of(context).size.height *
+                            0.1, // 10% of screen height
+                      ),
+                      itemCount: taskModel.tasksList.length,
+                      physics: BouncingScrollPhysics(),
+                      itemBuilder: (context, index) {
+                        final task = taskModel.tasksList[index];
+
+                        //ListView UI
+                        return Card(
+                          elevation: 0,
+                          margin: EdgeInsets.only(left: 20, top: 10, right: 20),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          color:
+                              task.isDone
+                                  ? Theme.of(
+                                    context,
+                                  ).colorScheme.surfaceContainer
+                                  : Theme.of(
+                                    context,
+                                  ).colorScheme.surfaceContainerLow,
+                          child: ListTile(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            onTap: () {
+                              taskModel.toggleIsdone(index);
+                            },
+                            title: Padding(
+                              padding: EdgeInsets.only(
+                                left: 5,
+                                top: 5,
+                                bottom: 5,
+                              ),
+
+                              child: Text(
+                                "${task.title}",
+                                style: TextStyle(
+                                  decoration:
+                                      task.isDone
+                                          ? TextDecoration.lineThrough
+                                          : TextDecoration.none,
                                 ),
                               ),
-                              actions: [
-                                SizedBox(
-                                  height: 40,
-                                  child: FilledButton.tonal(
-                                    onPressed: () {
-                                      Navigator.pop(context);
-                                    },
-                                    child: Text("Cancle"),
-                                  ),
-                                ),
-                                SizedBox(
-                                  height: 40,
-                                  child: FilledButton(
-                                    onPressed: () {
-                                      taskModel.deleteTasks(index);
-                                      Navigator.pop(context);
-                                    },
-                                    child: Text("Delete"),
-                                  ),
-                                ),
-                              ],
                             ),
-                      );
-                    },
+                            trailing: Checkbox(
+                              value: task.isDone,
+                              onChanged: (value) {
+                                taskModel.toggleIsdone(index);
+                              },
+                            ),
+                            onLongPress: () {
+                              showDialog(
+                                context: context,
+                                builder:
+                                    (context) => AlertDialog(
+                                      title: Text("Want to delete?"),
+                                      content: ConstrainedBox(
+                                        constraints: BoxConstraints(
+                                          maxHeight:
+                                              MediaQuery.of(
+                                                context,
+                                              ).size.height *
+                                              0.7,
+                                        ),
+                                        child: Text(
+                                          "Are you sure to delete: ${task.title} ${task.isDone ? "(already done)" : ''}",
+                                          style:
+                                              Theme.of(
+                                                context,
+                                              ).textTheme.bodyLarge,
+                                        ),
+                                      ),
+                                      actions: [
+                                        SizedBox(
+                                          height: 40,
+                                          child: FilledButton.tonal(
+                                            onPressed: () {
+                                              Navigator.pop(context);
+                                            },
+                                            child: Text("Cancle"),
+                                          ),
+                                        ),
+                                        SizedBox(
+                                          height: 40,
+                                          child: FilledButton(
+                                            onPressed: () {
+                                              taskModel.deleteTasks(index);
+                                              Navigator.pop(context);
+                                            },
+                                            child: Text("Delete"),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                              );
+                            },
+                          ),
+                        );
+                      },
+                    ),
                   ),
-                );
-              },
-            );
-          }
-        },
+                ],
+              );
+            }
+          },
+        ),
       ),
+
+      //add new Tasks
       floatingActionButton: FloatingActionButton(
         elevation: 0,
         onPressed: () {

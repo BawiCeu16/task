@@ -7,11 +7,11 @@ class InfoPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Info")),
-      body: Column(
-        children: [
-          Expanded(
-            child: Column(
+      appBar: AppBar(title: Text("About")),
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
@@ -36,9 +36,10 @@ class InfoPage extends StatelessWidget {
                         "task",
                         style: Theme.of(context).textTheme.headlineMedium,
                       ),
+                      SizedBox(width: 5),
                       Text(
-                        "1.1",
-                        style: Theme.of(context).textTheme.headlineMedium,
+                        "1.0.1",
+                        style: Theme.of(context).textTheme.headlineSmall,
                       ),
                     ],
                   ),
@@ -72,23 +73,35 @@ class InfoPage extends StatelessWidget {
                 ),
               ],
             ),
-          ),
-
-          InkWell(
-            child: Text(
-              "privacy . policy",
-              style: TextStyle(color: Theme.of(context).colorScheme.primary),
-            ),
-            onTap: () {
-              launchUrl(
-                Uri.parse(
-                  "https://bawiceu16.github.io/task-privacy-and-policy-/",
+            SizedBox(height: 5),
+            Card(
+              elevation: 0,
+              child: InkWell(
+                borderRadius: BorderRadius.circular(100),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 2,
+                  ),
+                  child: Text(
+                    "privacy . policy",
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                  ),
                 ),
-              );
-            },
-          ),
-          SizedBox(height: 5),
-        ],
+                onTap: () {
+                  launchUrl(
+                    Uri.parse(
+                      "https://bawiceu16.github.io/task-privacy-and-policy-/",
+                    ),
+                  );
+                },
+              ),
+            ),
+            SizedBox(height: 5),
+          ],
+        ),
       ),
     );
   }
