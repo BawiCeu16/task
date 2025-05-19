@@ -54,6 +54,9 @@ class MyApp extends StatelessWidget {
               colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
               splashFactory: NoSplash.splashFactory,
               brightness: Brightness.light, // Light theme properties
+              floatingActionButtonTheme: FloatingActionButtonThemeData(
+                elevation: 0,
+              ),
             ),
             darkTheme: ThemeData(
               colorScheme: ColorScheme.fromSeed(
@@ -62,6 +65,9 @@ class MyApp extends StatelessWidget {
               ),
               splashFactory: NoSplash.splashFactory,
               brightness: Brightness.dark, // Dark theme properties
+              floatingActionButtonTheme: FloatingActionButtonThemeData(
+                elevation: 0,
+              ),
             ),
             themeMode: themeProvider.themeMode,
             home: const HomePage(),

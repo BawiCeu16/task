@@ -33,8 +33,9 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    //listControllers
+    //controllers
     final listController = ScrollController();
+    final _searchController = SearchController();
 
     //starts of UI
     return Scaffold(
@@ -59,6 +60,8 @@ class _HomePageState extends State<HomePage> {
                       vertical: 10,
                     ),
                     child: SearchBar(
+                      controller: _searchController,
+                      onChanged: (value) {},
                       hintText: "Search..",
                       trailing: [
                         IconButton(
@@ -204,7 +207,6 @@ class _HomePageState extends State<HomePage> {
 
       //add new Tasks
       floatingActionButton: FloatingActionButton(
-        elevation: 0,
         onPressed: () {
           showDialog(
             barrierDismissible: false,
