@@ -138,23 +138,29 @@ class SettingsPage extends StatelessWidget {
                                         ],
                                       ),
                                       actions: [
-                                        FilledButton.tonal(
-                                          onPressed: () {
-                                            Navigator.pop(context);
-                                          },
-                                          child: Text("Cancle"),
-                                        ),
-                                        FilledButton(
-                                          style: ButtonStyle(
-                                            backgroundColor:
-                                                WidgetStateProperty.all(
-                                                  Theme.of(
-                                                    context,
-                                                  ).colorScheme.error,
-                                                ),
+                                        SizedBox(
+                                          height: 45,
+                                          child: FilledButton.tonal(
+                                            onPressed: () {
+                                              Navigator.pop(context);
+                                            },
+                                            child: Text("Cancle"),
                                           ),
-                                          onPressed: () {},
-                                          child: Text("Delete"),
+                                        ),
+                                        SizedBox(
+                                          height: 45,
+                                          child: FilledButton(
+                                            style: ButtonStyle(
+                                              backgroundColor:
+                                                  WidgetStateProperty.all(
+                                                    Theme.of(
+                                                      context,
+                                                    ).colorScheme.error,
+                                                  ),
+                                            ),
+                                            onPressed: () {},
+                                            child: Text("Delete"),
+                                          ),
                                         ),
                                       ],
                                     ),

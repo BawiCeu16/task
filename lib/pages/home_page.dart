@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_remix/flutter_remix.dart';
 import 'package:provider/provider.dart';
 import 'package:task/pages/settings_page.dart';
+import 'package:task/util/task_model.dart';
 import 'package:task/util/task_provider.dart';
 
 class HomePage extends StatefulWidget {
@@ -62,7 +63,12 @@ class _HomePageState extends State<HomePage> {
                     ),
                     child: SearchBar(
                       controller: _searchController,
-                      onChanged: (value) {},
+                      onChanged: (value) {
+                        Provider.of<TaskProvider>(
+                          context,
+                          listen: false,
+                        ).searchTasks(value);
+                      },
                       hintText: "Search..",
                       trailing: [
                         IconButton(
@@ -98,10 +104,16 @@ class _HomePageState extends State<HomePage> {
                             MediaQuery.of(context).size.height *
                             0.1, // 10% of screen height
                       ),
-                      itemCount: taskModel.tasksList.length,
+                      itemCount:
+                          Provider.of<TaskProvider>(
+                            context,
+                          ).filteredTasksList.length,
                       physics: BouncingScrollPhysics(),
                       itemBuilder: (context, index) {
-                        final task = taskModel.tasksList[index];
+                        final task =
+                            Provider.of<TaskProvider>(
+                              context,
+                            ).filteredTasksList[index];
 
                         //ListView UI
                         return Card(
@@ -133,7 +145,7 @@ class _HomePageState extends State<HomePage> {
                               ),
 
                               child: Text(
-                                "${task.title}",
+                                task.title,
                                 style: TextStyle(
                                   decoration:
                                       task.isDone
