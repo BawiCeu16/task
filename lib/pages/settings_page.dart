@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_remix/flutter_remix.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:page_animation_transition/animations/right_to_left_transition.dart';
 import 'package:page_animation_transition/page_animation_transition.dart';
@@ -30,6 +31,7 @@ class SettingsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text("Settings")),
+
       body: Column(
         children: [
           Expanded(
@@ -57,9 +59,9 @@ class SettingsPage extends StatelessWidget {
                             title: Text("Theme"),
                             leading: Padding(
                               padding: const EdgeInsets.only(left: 5),
-                              child: Icon(Icons.palette),
+                              child: Icon(FlutterRemix.palette_fill),
                             ),
-                            trailing: Icon(Icons.chevron_right),
+                            trailing: Icon(FlutterRemix.arrow_right_s_line),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.only(
                                 topLeft: Radius.circular(10),
@@ -92,7 +94,7 @@ class SettingsPage extends StatelessWidget {
                                     ),
                           ),
 
-                          //
+                          //delete data's
                           ListTile(
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.only(
@@ -109,7 +111,7 @@ class SettingsPage extends StatelessWidget {
                             leading: Padding(
                               padding: const EdgeInsets.only(left: 5),
                               child: Icon(
-                                Icons.delete,
+                                FlutterRemix.delete_bin_5_fill,
                                 color: Theme.of(context).colorScheme.error,
                               ),
                             ),
@@ -221,7 +223,7 @@ class SettingsPage extends StatelessWidget {
                               padding: const EdgeInsets.only(left: 5),
                               child: Icon(Icons.info),
                             ),
-                            trailing: Icon(Icons.chevron_right),
+                            trailing: Icon(FlutterRemix.arrow_right_s_line),
 
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.only(

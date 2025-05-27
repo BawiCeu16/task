@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_remix/flutter_remix.dart';
 import 'package:provider/provider.dart';
 import 'package:task/pages/settings_page.dart';
 import 'package:task/util/task_provider.dart';
@@ -75,7 +76,7 @@ class _HomePageState extends State<HomePage> {
                               ),
                             );
                           },
-                          icon: Icon(Icons.settings),
+                          icon: Icon(FlutterRemix.settings_3_fill),
                         ),
                       ],
                       elevation: WidgetStateProperty.all(0),
@@ -249,7 +250,7 @@ class _HomePageState extends State<HomePage> {
                 ),
           );
         },
-        child: Icon(Icons.add),
+        child: Icon(FlutterRemix.add_line),
       ),
     );
   }
