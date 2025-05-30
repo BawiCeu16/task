@@ -38,7 +38,7 @@ class InfoPage extends StatelessWidget {
                       ),
                       SizedBox(width: 5),
                       Text(
-                        "1.0.1",
+                        "1.1.0",
                         style: Theme.of(context).textTheme.headlineSmall,
                       ),
                     ],
