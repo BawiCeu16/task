@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_remix/flutter_remix.dart';
 import 'package:provider/provider.dart';
 import 'package:task/pages/settings_page.dart';
-import 'package:task/util/task_model.dart';
 import 'package:task/util/task_provider.dart';
 
 class HomePage extends StatefulWidget {

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:home_widget/home_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:task/pages/home_page.dart';
 import 'package:task/util/task_provider.dart';
@@ -8,8 +9,8 @@ import 'package:task/util/theme_provider.dart'; // Add this import
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
-  GoogleFonts.spaceMonoTextTheme();
+  await HomeWidget.initiallyLaunchedFromHomeWidget();
+  // GoogleFonts.spaceMonoTextTheme();
 
   // Initialize providers
   final taskProvider = TaskProvider();
@@ -54,9 +55,9 @@ class MyApp extends StatelessWidget {
           return MaterialApp(
             debugShowCheckedModeBanner: false,
             theme: ThemeData(
-              textTheme: GoogleFonts.spaceMonoTextTheme(
-                Theme.of(context).textTheme,
-              ),
+              // textTheme: GoogleFonts.spaceMonoTextTheme(
+              //   Theme.of(context).textTheme,
+              // ),
               colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
               splashFactory: NoSplash.splashFactory,
               brightness: Brightness.light, // Light theme properties
@@ -65,9 +66,9 @@ class MyApp extends StatelessWidget {
               ),
             ),
             darkTheme: ThemeData(
-              textTheme: GoogleFonts.spaceMonoTextTheme(
-                Theme.of(context).textTheme,
-              ),
+              // textTheme: GoogleFonts.spaceMonoTextTheme(
+              //   Theme.of(context).textTheme,
+              // ),
               colorScheme: ColorScheme.fromSeed(
                 seedColor: Colors.blue,
                 brightness: Brightness.dark,
@@ -80,7 +81,7 @@ class MyApp extends StatelessWidget {
             ),
             themeMode: themeProvider.themeMode,
 
-            home: const HomePage(),
+            home: HomePage(),
           );
         },
       ),

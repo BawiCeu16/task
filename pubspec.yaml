@@ -37,13 +37,14 @@ dependencies:
   shared_preferences: ^2.5.3
   provider: ^6.1.5
   change_app_package_name: ^1.5.0
-  adaptive_theme: ^3.7.0
+  # adaptive_theme: ^3.7.0
   use_widgets: ^0.4.0
   url_launcher: ^6.3.1
   font_awesome_flutter: ^10.8.0
   page_animation_transition: ^1.0.0
   flutter_remix: ^0.0.3
   google_fonts: ^6.2.1
+  home_widget: ^0.8.0
 
 dev_dependencies:
   flutter_test:

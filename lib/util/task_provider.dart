@@ -1,5 +1,7 @@
 import 'dart:convert';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
+import 'package:home_widget/home_widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'task_model.dart';
 
@@ -15,6 +17,23 @@ class TaskProvider with ChangeNotifier {
 
   bool appTheme = false;
   bool get _appTheme => appTheme;
+
+  Future<void> _updateWidgetData() async {
+    final prefs = await SharedPreferences.getInstance();
+    // Serialize tasks to JSON
+    final tasksJson = json.encode(
+      tasksList.map((task) => task.toMap()).toList(),
+    );
+    await prefs.setString('flutter.tasks_json', tasksJson);
+
+    // Trigger widget update
+    try {
+      const platform = MethodChannel('com.c.task/widget');
+      await platform.invokeMethod('updateWidget');
+    } catch (e) {
+      print('Widget update error: $e');
+    }
+  }
 
   void searchTasks(String query) {
     _searchQuery = query.toLowerCase();
@@ -63,6 +82,7 @@ class TaskProvider with ChangeNotifier {
     }
 
     await saveTasks();
+    await _updateWidgetData();
     notifyListeners();
   }
 
@@ -83,6 +103,7 @@ class TaskProvider with ChangeNotifier {
     }
 
     await saveTasks();
+    await _updateWidgetData();
     notifyListeners();
   }
 
@@ -100,6 +121,7 @@ class TaskProvider with ChangeNotifier {
     }
 
     await saveTasks();
+    await _updateWidgetData();
     notifyListeners();
   }
 }
