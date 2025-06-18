@@ -1,6 +1,5 @@
-<h1 align="center" id="title">task</h1>
-
 <p align="center"><img src="https://github.com/BawiCeu16/task/blob/main/android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png?raw=true" alt="project-image"></p>
+<h1 align="center" id="title">task</h1>
 
 <p id="description">this is my first open-source app and i'm still beginner, the project might be very simple.</p>
 
