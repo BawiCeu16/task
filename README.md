@@ -1,16 +1,42 @@
-# task
+<h1 align="center" id="title">task</h1>
 
-A new Flutter project.
+<p align="center"><img src="https://github.com/BawiCeu16/task/blob/main/android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png?raw=true" alt="project-image"></p>
 
-## Getting Started
+<p id="description">this is my first open-source app and i'm beginner so if you have suggestion</p>
 
-This project is a starting point for a Flutter application.
+<h2>Project Screenshots:</h2>
 
-A few resources to get you started if this is your first Flutter project:
+<img src="https://github.com/BawiCeu16/task/blob/main/screen_shots/home_page.png?raw=true" alt="project-screenshot" width="300" height="400/">
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+<img src="https://github.com/BawiCeu16/task/blob/main/screen_shots/add_task.png?raw=true" alt="project-screenshot" width="300" height="400/">
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+  
+  
+<h2>🧐 Features</h2>
+
+Here're some of the project's best features:
+
+*   add task
+*   toggle Task
+*   toggle Task (long press to the task)
+*   save Tasks in your device (until you clear the app data)
+
+<h2>🛠️ Installation Steps:</h2>
+
+<p>1. Download the Project and code whatever you want</p>
+
+<h2>🍰 Contribution Guidelines:</h2>
+
+by me
+
+  
+  
+<h2>💻 Built with</h2>
+
+Technologies used in the project:
+
+*   store the tasks in SharedPreference
+
+<h2>🛡️ License:</h2>
+
+This project is licensed under the MIT Licen
