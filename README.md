@@ -6,9 +6,9 @@
 
 <h2>Project Screenshots:</h2>
 
-<img src="https://github.com/BawiCeu16/task/blob/main/screen_shots/home_page.png?raw=true" alt="project-screenshot" width="300" height="400/">
+<img src="https://github.com/BawiCeu16/task/blob/main/screen_shots/home_page.png?raw=true" alt="project-screenshot" width="300" height="680/">
 
-<img src="https://github.com/BawiCeu16/task/blob/main/screen_shots/add_task.png?raw=true" alt="project-screenshot" width="300" height="400/">
+<img src="https://github.com/BawiCeu16/task/blob/main/screen_shots/add_task.png?raw=true" alt="project-screenshot" width="300" height="680/">
 
   
   
