@@ -2,17 +2,19 @@
 
 <p align="center"><img src="https://github.com/BawiCeu16/task/blob/main/android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png?raw=true" alt="project-image"></p>
 
-<p id="description">this is my first open-source app and i'm beginner so if you have suggestion</p>
+<p id="description">this is my first open-source app and i'm still beginner, the project might be very simple.</p>
 
 <h2>Project Screenshots:</h2>
 
+<h3 id="home_page">HomePage</h3>
 <img src="https://github.com/BawiCeu16/task/blob/main/screen_shots/home_page.png?raw=true" alt="project-screenshot" width="300" height="680/">
 
+<h3 id="add_task_page">Add task</h3>
 <img src="https://github.com/BawiCeu16/task/blob/main/screen_shots/add_task.png?raw=true" alt="project-screenshot" width="300" height="680/">
 
   
   
-<h2>🧐 Features</h2>
+<h2>Features</h2>
 
 Here're some of the project's best features:
 
@@ -24,12 +26,6 @@ Here're some of the project's best features:
 <h2>🛠️ Installation Steps:</h2>
 
 <p>1. Download the Project and code whatever you want</p>
-
-<h2>🍰 Contribution Guidelines:</h2>
-
-by me
-
-  
   
 <h2>💻 Built with</h2>
 
