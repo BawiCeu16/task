@@ -13,13 +13,12 @@
 
   
   
-<h2>Features</h2>
+<h2>Features:</h2>
 
-Here're some of the project's best features:
 
 *   add task
 *   toggle Task
-*   toggle Task (long press to the task)
+*   delete Task (long press to the task)
 *   save Tasks in your device (until you clear the app data)
 
 <h2>🛠️ Installation Steps:</h2>
