@@ -38,7 +38,7 @@ class InfoPage extends StatelessWidget {
                       ),
                       SizedBox(width: 5),
                       Text(
-                        "1.1.0",
+                        "1.1.1",
                         style: Theme.of(context).textTheme.headlineSmall,
                       ),
                     ],
@@ -69,6 +69,17 @@ class InfoPage extends StatelessWidget {
                     "       The developer releases monthly updates to fix bugs and improve the UI, providing a smooth and user-friendly experience. Stay organized effortlessly.",
 
                     style: Theme.of(context).textTheme.bodyLarge,
+                  ),
+                ),
+                SizedBox(height: 10),
+                Padding(
+                  padding: const EdgeInsets.only(left: 25, right: 20),
+                  child: Center(
+                    child: Text(
+                      "This app is now Open-Source",
+
+                      style: Theme.of(context).textTheme.bodyLarge,
+                    ),
                   ),
                 ),
               ],

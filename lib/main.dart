@@ -3,43 +3,53 @@ import 'package:flutter/services.dart';
 import 'package:home_widget/home_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:task/pages/home_page.dart';
+// import 'package:task/pages/intro_page.dart';
+// import 'package:task/util/intro_provider.dart';
 import 'package:task/util/task_provider.dart';
 import 'package:task/util/theme_provider.dart'; // Add this import
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  SystemChrome.setSystemUIOverlayStyle(
+    SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+      systemNavigationBarColor: Colors.transparent,
+    ),
+  );
   await HomeWidget.initiallyLaunchedFromHomeWidget();
   // GoogleFonts.spaceMonoTextTheme();
 
   // Initialize providers
   final taskProvider = TaskProvider();
   final themeProvider = ThemeProvider();
+  // final introProvider = IntroProvider();
 
   // Load initial data
   await taskProvider.loadTasks();
   await themeProvider.loadTheme();
-
+  // await introProvider.isDone;
   //UI Configuration
-  SystemChrome.setSystemUIOverlayStyle(
-    SystemUiOverlayStyle(
-      // statusBarColor: Colors.white,
-      // statusBarIconBrightness: Brightness.dark,
-      // systemNavigationBarColor: Colors.white,
-      // systemNavigationBarIconBrightness: Brightness.dark,
-    ),
-  );
-
+  // SystemChrome.setSystemUIOverlayStyle(
+  //   SystemUiOverlayStyle(
+  //     statusBarColor: Colors.white,
+  //     statusBarIconBrightness: Brightness.dark,
+  //     systemNavigationBarColor: Colors.white,
+  //     systemNavigationBarIconBrightness: Brightness.dark,
+  //   ),
+  // );
   runApp(MyApp(taskProvider: taskProvider, themeProvider: themeProvider));
 }
 
 class MyApp extends StatelessWidget {
   final TaskProvider taskProvider;
   final ThemeProvider themeProvider;
+  // final IntroProvider introProvider;
 
   const MyApp({
     super.key,
     required this.taskProvider,
     required this.themeProvider,
+    // required this.introProvider,
   });
 
   @override
@@ -48,6 +58,7 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider.value(value: taskProvider),
         ChangeNotifierProvider.value(value: themeProvider),
+        // ChangeNotifierProvider.value(value: introProvider),
       ],
       child: Consumer<ThemeProvider>(
         builder: (context, themeProvider, child) {

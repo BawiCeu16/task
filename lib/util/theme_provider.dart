@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ThemeProvider with ChangeNotifier {
   ThemeMode themeMode = ThemeMode.system;
-
-  ThemeMode get _themeMode => themeMode;
 
   Future<void> loadTheme() async {
     final prefs = await SharedPreferences.getInstance();
