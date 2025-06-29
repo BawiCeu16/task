@@ -74,7 +74,13 @@ class TaskProvider with ChangeNotifier {
 
   //addTasks
   Future<void> addTasks(String title) async {
-    tasksList.add(TaskModel(title: title, isDone: false));
+    tasksList.add(
+      TaskModel(
+        title: title,
+        isDone: false,
+        createDate: DateTime.now().toString(),
+      ),
+    );
 
     if (_searchQuery.isNotEmpty) {
       searchTasks(_searchQuery);
@@ -95,6 +101,7 @@ class TaskProvider with ChangeNotifier {
     tasksList[actualIndex] = TaskModel(
       title: tasksList[actualIndex].title,
       isDone: !tasksList[actualIndex].isDone,
+      createDate: tasksList[actualIndex].createDate,
     );
 
     if (_searchQuery.isNotEmpty) {
@@ -130,7 +137,7 @@ class TaskProvider with ChangeNotifier {
             ? index
             : tasksList.indexOf(filteredTasksList[index]);
 
-    tasksList.removeAt(actualIndex);
+    tasksList.removeAt(index);
 
     if (_searchQuery.isEmpty) {
       searchTasks(_searchQuery);

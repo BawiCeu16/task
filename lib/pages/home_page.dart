@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_remix/flutter_remix.dart';
 import 'package:provider/provider.dart';
 import 'package:task/pages/settings_page.dart';
+import 'package:task/util/task_model.dart';
 import 'package:task/util/task_provider.dart';
 
 class HomePage extends StatefulWidget {
@@ -124,105 +126,291 @@ class _HomePageState extends State<HomePage> {
                                 ).filteredTasksList[index];
 
                             //ListView UI
-                            return AnimatedContainer(
-                              duration: Duration(milliseconds: 300),
-                              child: Card(
-                                elevation: 0,
-                                margin: EdgeInsets.only(
-                                  left: 20,
-                                  top: 10,
-                                  right: 20,
-                                ),
+                            return Card(
+                              elevation: 0,
+                              margin: EdgeInsets.only(
+                                left: 20,
+                                top: 10,
+                                right: 20,
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              color:
+                                  task.isDone
+                                      ? Theme.of(
+                                        context,
+                                      ).colorScheme.surfaceContainer
+                                      // ignore: deprecated_member_use
+                                      .withOpacity(0.4)
+                                      : Theme.of(
+                                        context,
+                                      ).colorScheme.surfaceContainer,
+
+                              child: ListTile(
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(10),
                                 ),
-                                color:
-                                    task.isDone
-                                        ? Theme.of(
-                                          context,
-                                        ).colorScheme.surfaceContainer
-                                        : Theme.of(
-                                          context,
-                                        ).colorScheme.surfaceContainerLow,
-                                child: ListTile(
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(10),
+                                onTap: () {
+                                  //toggle tasks(isDone)
+                                  taskModel.toggleIsdone(index);
+                                },
+                                title: Padding(
+                                  padding: EdgeInsets.only(
+                                    left: 5,
+                                    top: 5,
+                                    bottom: 5,
                                   ),
-                                  onTap: () {
+
+                                  child: Text(
+                                    task.title,
+
+                                    style: TextStyle(
+                                      decoration:
+                                          task.isDone
+                                              ? TextDecoration.lineThrough
+                                              : TextDecoration.none,
+                                      color:
+                                          task.isDone
+                                              ? Theme.of(
+                                                context,
+                                              ).colorScheme.onSurface
+                                              // ignore: deprecated_member_use
+                                              .withOpacity(0.4)
+                                              : Theme.of(
+                                                context,
+                                              ).colorScheme.onSurfaceVariant,
+                                    ),
+                                  ),
+                                ),
+                                trailing: Checkbox(
+                                  value: task.isDone,
+                                  onChanged: (value) {
                                     taskModel.toggleIsdone(index);
                                   },
-                                  title: Padding(
-                                    padding: EdgeInsets.only(
-                                      left: 5,
-                                      top: 5,
-                                      bottom: 5,
-                                    ),
-
-                                    child: Text(
-                                      task.title,
-                                      style: TextStyle(
-                                        decoration:
-                                            task.isDone
-                                                ? TextDecoration.lineThrough
-                                                : TextDecoration.none,
-                                      ),
-                                    ),
-                                  ),
-                                  trailing: Checkbox(
-                                    value: task.isDone,
-                                    onChanged: (value) {
-                                      taskModel.toggleIsdone(index);
-                                    },
-                                  ),
-                                  onLongPress: () {
-                                    showDialog(
-                                      context: context,
-                                      builder:
-                                          (context) => AlertDialog(
-                                            title: Text("Want to delete?"),
-                                            content: ConstrainedBox(
-                                              constraints: BoxConstraints(
-                                                maxHeight:
-                                                    MediaQuery.of(
-                                                      context,
-                                                    ).size.height *
-                                                    0.7,
-                                              ),
-                                              child: Text(
-                                                "Are you sure to delete: ${task.title} ${task.isDone ? "(already done)" : ''}",
-                                                style:
-                                                    Theme.of(
-                                                      context,
-                                                    ).textTheme.bodyLarge,
-                                              ),
-                                            ),
-                                            actions: [
-                                              SizedBox(
-                                                height: 40,
-                                                child: FilledButton.tonal(
-                                                  onPressed: () {
-                                                    Navigator.pop(context);
-                                                  },
-                                                  child: Text("Cancle"),
-                                                ),
-                                              ),
-                                              SizedBox(
-                                                height: 40,
-                                                child: FilledButton(
-                                                  onPressed: () {
-                                                    taskModel.deleteTasks(
-                                                      index,
-                                                    );
-                                                    Navigator.pop(context);
-                                                  },
-                                                  child: Text("Delete"),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                    );
-                                  },
                                 ),
+                                onLongPress: () {
+                                  //show dialog for delete task
+                                  showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return Dialog(
+                                        child: IntrinsicHeight(
+                                          child: SingleChildScrollView(
+                                            child: Column(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                // Top Row
+                                                Container(
+                                                  padding: EdgeInsets.only(
+                                                    left: 20,
+                                                    right: 20,
+                                                    top: 15,
+                                                    bottom: 0,
+                                                  ),
+                                                  child: Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .spaceBetween,
+                                                    children: [
+                                                      Text(
+                                                        "Informations",
+                                                        style: TextStyle(
+                                                          fontSize: 16,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                                Padding(
+                                                  padding: EdgeInsets.only(
+                                                    left: 16,
+                                                    right: 16,
+                                                    bottom: 10,
+                                                  ),
+                                                  child: Column(
+                                                    children: [
+                                                      //task Info
+                                                      ListTile(
+                                                        shape: RoundedRectangleBorder(
+                                                          borderRadius:
+                                                              BorderRadius.circular(
+                                                                10,
+                                                              ),
+                                                        ),
+                                                        title: Text("Task"),
+                                                        subtitle: Text(
+                                                          task.title,
+                                                        ),
+                                                        onLongPress: () {
+                                                          Clipboard.setData(
+                                                            ClipboardData(
+                                                              text: task.title,
+                                                            ),
+                                                          );
+                                                          ScaffoldMessenger.of(
+                                                            context,
+                                                          ).showSnackBar(
+                                                            SnackBar(
+                                                              content: Text(
+                                                                "Copied to clipboard",
+                                                              ),
+                                                            ),
+                                                          );
+                                                        },
+                                                      ),
+                                                      //createDate Info
+                                                      ListTile(
+                                                        shape: RoundedRectangleBorder(
+                                                          borderRadius:
+                                                              BorderRadius.circular(
+                                                                10,
+                                                              ),
+                                                        ),
+                                                        title: Text(
+                                                          "Create Date",
+                                                        ),
+                                                        subtitle: Text(
+                                                          task.createDate,
+                                                        ),
+                                                        onLongPress: () {
+                                                          Clipboard.setData(
+                                                            ClipboardData(
+                                                              text:
+                                                                  task.createDate,
+                                                            ),
+                                                          );
+                                                          ScaffoldMessenger.of(
+                                                            context,
+                                                          ).showSnackBar(
+                                                            SnackBar(
+                                                              content: Text(
+                                                                "Copied to clipboard",
+                                                              ),
+                                                            ),
+                                                          );
+                                                        },
+                                                      ),
+
+                                                      //isDone Info
+                                                      ListTile(
+                                                        shape: RoundedRectangleBorder(
+                                                          borderRadius:
+                                                              BorderRadius.circular(
+                                                                10,
+                                                              ),
+                                                        ),
+                                                        title: Text("Status"),
+                                                        subtitle: Text(
+                                                          task.isDone
+                                                              ? "Done"
+                                                              : "Not Done yet",
+                                                        ),
+                                                        onLongPress: () {
+                                                          Clipboard.setData(
+                                                            ClipboardData(
+                                                              text:
+                                                                  task.isDone
+                                                                      ? "Done"
+                                                                      : "Not Done",
+                                                            ),
+                                                          );
+                                                          ScaffoldMessenger.of(
+                                                            context,
+                                                          ).showSnackBar(
+                                                            SnackBar(
+                                                              content: Text(
+                                                                "Copied to clipboard",
+                                                              ),
+                                                            ),
+                                                          );
+                                                        },
+                                                      ),
+                                                      //Delete Task
+                                                      ListTile(
+                                                        shape: RoundedRectangleBorder(
+                                                          borderRadius:
+                                                              BorderRadius.circular(
+                                                                10,
+                                                              ),
+                                                        ),
+                                                        leading: Icon(
+                                                          FlutterRemix
+                                                              .delete_bin_fill,
+                                                          color:
+                                                              Theme.of(context)
+                                                                  .colorScheme
+                                                                  .error,
+                                                        ),
+                                                        title: Text(
+                                                          "Delete Task",
+                                                          style: TextStyle(
+                                                            color:
+                                                                Theme.of(
+                                                                      context,
+                                                                    )
+                                                                    .colorScheme
+                                                                    .error,
+                                                          ),
+                                                        ),
+                                                        subtitle: Text(
+                                                          task.isDone
+                                                              ? "This task is already done, you can delete it."
+                                                              : "Are you sure to delete this task?",
+                                                        ),
+                                                        onTap: () {
+                                                          taskModel.deleteTasks(
+                                                            index,
+                                                          );
+                                                          Navigator.pop(
+                                                            context,
+                                                          );
+                                                          ScaffoldMessenger.of(
+                                                            context,
+                                                          ).showSnackBar(
+                                                            SnackBar(
+                                                              content: Text(
+                                                                "Task deleted",
+                                                              ),
+                                                            ),
+                                                          );
+                                                        },
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                                Divider(),
+                                                Padding(
+                                                  padding: EdgeInsets.only(
+                                                    left: 16,
+                                                    right: 16,
+                                                    bottom: 10,
+                                                  ),
+                                                  child: Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment.end,
+                                                    children: [
+                                                      FilledButton(
+                                                        onPressed: () {
+                                                          Navigator.pop(
+                                                            context,
+                                                          );
+                                                        },
+                                                        child: Text("Close"),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  );
+                                },
                               ),
                             );
                           },
