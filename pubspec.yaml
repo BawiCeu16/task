@@ -37,6 +37,7 @@ dependencies:
   shared_preferences: ^2.5.3
   provider: ^6.1.5
   change_app_package_name: ^1.5.0
+  
   # adaptive_theme: ^3.7.0
   use_widgets: ^0.4.0
   url_launcher: ^6.3.1
@@ -46,6 +47,11 @@ dependencies:
   google_fonts: ^6.2.1
   home_widget: ^0.8.0
   introduction_slider: ^2.0.1
+  package_info_plus: ^8.3.1
+  intl: ^0.20.2
+  yaru: ^8.1.0
+  path_provider: ^2.1.5
+  file_picker: ^10.3.1
 
 dev_dependencies:
   flutter_test:
@@ -71,7 +77,7 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
-      - assets/
+      - assets/images/play_store_512.png
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

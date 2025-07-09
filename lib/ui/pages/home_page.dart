@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_remix/flutter_remix.dart';
 import 'package:provider/provider.dart';
-import 'package:task/pages/settings_page.dart';
-import 'package:task/util/task_model.dart';
+import 'package:task/ui/pages/settings_page.dart';
 import 'package:task/util/task_provider.dart';
 
 class HomePage extends StatefulWidget {
@@ -39,6 +38,7 @@ class _HomePageState extends State<HomePage> {
     //controllers
     final listController = ScrollController();
     final searchController = SearchController();
+    final controller = TextEditingController();
 
     //media query
     final screenWidth = MediaQuery.of(context).size.width;
@@ -73,6 +73,10 @@ class _HomePageState extends State<HomePage> {
                           listen: false,
                         ).searchTasks(value);
                       },
+                      leading: Padding(
+                        padding: const EdgeInsets.only(left: 10),
+                        child: Icon(FlutterRemix.search_line),
+                      ),
                       hintText: "Search..",
                       trailing: [
                         IconButton(
@@ -190,7 +194,7 @@ class _HomePageState extends State<HomePage> {
                                   },
                                 ),
                                 onLongPress: () {
-                                  //show dialog for delete task
+                                  //show dialog for Info
                                   showDialog(
                                     context: context,
                                     builder: (BuildContext context) {
@@ -201,32 +205,33 @@ class _HomePageState extends State<HomePage> {
                                               mainAxisSize: MainAxisSize.min,
                                               children: [
                                                 // Top Row
-                                                Container(
-                                                  padding: EdgeInsets.only(
-                                                    left: 20,
-                                                    right: 20,
-                                                    top: 15,
-                                                    bottom: 0,
-                                                  ),
-                                                  child: Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .spaceBetween,
-                                                    children: [
-                                                      Text(
-                                                        "Informations",
-                                                        style: TextStyle(
-                                                          fontSize: 16,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
+                                                // Container(
+                                                //   padding: EdgeInsets.only(
+                                                //     left: 20,
+                                                //     right: 20,
+                                                //     top: 15,
+                                                //     bottom: 0,
+                                                //   ),
+                                                //   child: Row(
+                                                //     mainAxisAlignment:
+                                                //         MainAxisAlignment
+                                                //             .spaceBetween,
+                                                //     children: [
+                                                //       Text(
+                                                //         "Informations",
+                                                //         style: TextStyle(
+                                                //           fontSize: 16,
+                                                //           fontWeight:
+                                                //               FontWeight.bold,
+                                                //         ),
+                                                //       ),
+                                                //     ],
+                                                //   ),
+                                                // ),
                                                 Padding(
                                                   padding: EdgeInsets.only(
                                                     left: 16,
+                                                    top: 16,
                                                     right: 16,
                                                     bottom: 10,
                                                   ),
@@ -328,55 +333,109 @@ class _HomePageState extends State<HomePage> {
                                                           );
                                                         },
                                                       ),
-                                                      //Delete Task
-                                                      ListTile(
-                                                        shape: RoundedRectangleBorder(
-                                                          borderRadius:
-                                                              BorderRadius.circular(
-                                                                10,
-                                                              ),
-                                                        ),
-                                                        leading: Icon(
-                                                          FlutterRemix
-                                                              .delete_bin_fill,
-                                                          color:
-                                                              Theme.of(context)
-                                                                  .colorScheme
-                                                                  .error,
-                                                        ),
-                                                        title: Text(
-                                                          "Delete Task",
-                                                          style: TextStyle(
-                                                            color:
-                                                                Theme.of(
-                                                                      context,
-                                                                    )
-                                                                    .colorScheme
-                                                                    .error,
-                                                          ),
-                                                        ),
-                                                        subtitle: Text(
-                                                          task.isDone
-                                                              ? "This task is already done, you can delete it."
-                                                              : "Are you sure to delete this task?",
-                                                        ),
-                                                        onTap: () {
-                                                          taskModel.deleteTasks(
-                                                            index,
-                                                          );
-                                                          Navigator.pop(
-                                                            context,
-                                                          );
-                                                          ScaffoldMessenger.of(
-                                                            context,
-                                                          ).showSnackBar(
-                                                            SnackBar(
-                                                              content: Text(
-                                                                "Task deleted",
+
+                                                      //Buttons
+                                                      Row(
+                                                        children: [
+                                                          //Delete Button
+                                                          Expanded(
+                                                            child: InkWell(
+                                                              borderRadius:
+                                                                  BorderRadius.circular(
+                                                                    10,
+                                                                  ),
+                                                              onTap: () {
+                                                                taskModel
+                                                                    .deleteTasks(
+                                                                      index,
+                                                                    );
+                                                                Navigator.pop(
+                                                                  context,
+                                                                );
+                                                                ScaffoldMessenger.of(
+                                                                  context,
+                                                                ).showSnackBar(
+                                                                  SnackBar(
+                                                                    content: Text(
+                                                                      "Task deleted",
+                                                                    ),
+                                                                  ),
+                                                                );
+                                                              },
+                                                              child: Padding(
+                                                                padding:
+                                                                    const EdgeInsets.all(
+                                                                      8.0,
+                                                                    ),
+                                                                child: Column(
+                                                                  children: [
+                                                                    Icon(
+                                                                      FlutterRemix
+                                                                          .delete_bin_fill,
+                                                                      size: 20,
+                                                                      color:
+                                                                          Theme.of(
+                                                                            context,
+                                                                          ).colorScheme.error,
+                                                                    ),
+                                                                    Text(
+                                                                      "Delete task",
+                                                                    ),
+                                                                  ],
+                                                                ),
                                                               ),
                                                             ),
-                                                          );
-                                                        },
+                                                          ),
+                                                          //Edit Button
+                                                          Expanded(
+                                                            child: InkWell(
+                                                              borderRadius:
+                                                                  BorderRadius.circular(
+                                                                    10,
+                                                                  ),
+                                                              onTap: () {
+                                                                Navigator.pop(
+                                                                  context,
+                                                                );
+                                                                final taskProvider =
+                                                                    Provider.of<
+                                                                      TaskProvider
+                                                                    >(
+                                                                      context,
+                                                                      listen:
+                                                                          false,
+                                                                    );
+                                                                showEditTaskDialog(
+                                                                  context:
+                                                                      context,
+                                                                  taskProvider:
+                                                                      taskProvider,
+                                                                  index: index,
+                                                                  currentTitle:
+                                                                      task.title,
+                                                                );
+                                                              },
+                                                              child: Padding(
+                                                                padding:
+                                                                    const EdgeInsets.all(
+                                                                      8.0,
+                                                                    ),
+                                                                child: Column(
+                                                                  children: [
+                                                                    Icon(
+                                                                      FlutterRemix
+                                                                          .edit_fill,
+                                                                      size: 20,
+                                                                    ),
+                                                                    Text(
+                                                                      "Edit task",
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ],
                                                       ),
                                                     ],
                                                   ),
@@ -471,6 +530,48 @@ class _HomePageState extends State<HomePage> {
         },
         child: Icon(FlutterRemix.add_line),
       ),
+    );
+  }
+
+  Future<void> showEditTaskDialog({
+    required BuildContext context,
+    required TaskProvider taskProvider,
+    required int index,
+    required String currentTitle,
+  }) async {
+    final textController = TextEditingController(text: currentTitle);
+
+    return showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Edit Task'),
+          content: TextField(
+            controller: textController,
+            decoration: const InputDecoration(
+              hintText: 'Enter new task title',
+              border: OutlineInputBorder(),
+            ),
+            autofocus: true,
+          ),
+          actions: [
+            FilledButton.tonal(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Cancel'),
+            ),
+            FilledButton(
+              onPressed: () {
+                final newTitle = textController.text.trim();
+                if (newTitle.isNotEmpty) {
+                  taskProvider.editTask(index, newTitle);
+                  Navigator.pop(context);
+                }
+              },
+              child: const Text('Save'),
+            ),
+          ],
+        );
+      },
     );
   }
 }

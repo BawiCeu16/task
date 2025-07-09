@@ -5,8 +5,9 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:page_animation_transition/animations/right_to_left_transition.dart';
 import 'package:page_animation_transition/page_animation_transition.dart';
 import 'package:provider/provider.dart';
-import 'package:task/pages/about_page.dart';
-import 'package:task/pages/theme_setting_page.dart';
+import 'package:task/ui/pages/about_page.dart';
+import 'package:task/ui/pages/backup_page.dart';
+import 'package:task/ui/pages/theme_setting_page.dart';
 import 'package:task/util/task_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -94,17 +95,20 @@ class SettingsPage extends StatelessWidget {
                                 ),
                                 //
                                 ListTile(
-                                  title: Text("Text Size"),
+                                  title: Text("Backup & Restore"),
                                   leading: Padding(
                                     padding: const EdgeInsets.only(left: 5),
-                                    child: Icon(Icons.text_fields),
+                                    child: Icon(Icons.settings_backup_restore),
+                                  ),
+                                  trailing: Icon(
+                                    FlutterRemix.arrow_right_s_line,
                                   ),
                                   onTap:
-                                      () => ScaffoldMessenger.of(
+                                      () => Navigator.push(
                                         context,
-                                      ).showSnackBar(
-                                        SnackBar(
-                                          content: Text("wait for next Update"),
+                                        MaterialPageRoute(
+                                          builder:
+                                              (context) => const BackupPage(),
                                         ),
                                       ),
                                 ),
@@ -189,7 +193,9 @@ class SettingsPage extends StatelessWidget {
                                                         ),
                                                       ),
                                                     );
-                                                    updateSystemOverlayStyle(context);
+                                                    updateSystemOverlayStyle(
+                                                      context,
+                                                    );
                                                   },
                                                   child: Text("Delete"),
                                                 ),

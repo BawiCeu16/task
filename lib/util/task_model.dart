@@ -1,27 +1,32 @@
 class TaskModel {
-  //create requests
   final String title;
-  bool isDone;
-  String createDate;
+  final bool isDone;
+  final String createDate;
+  String? editDate; // Add this field for last edit date
 
-  //make requests
   TaskModel({
     required this.title,
-    this.isDone = false,
+    required this.isDone,
     required this.createDate,
+    this.editDate,
   });
 
-  // Convert TaskModel to Map
-  Map<String, dynamic> toMap() {
-    return {'title': title, 'isDone': isDone, 'createDate': createDate};
-  }
-
-  //Convert Map to TaskModel
+  // Update fromMap and toMap to include editDate
   factory TaskModel.fromMap(Map<String, dynamic> map) {
     return TaskModel(
       title: map['title'],
-      isDone: map['isDone'] ?? false,
-      createDate: map['createDate'] ?? '',
+      isDone: map['isDone'],
+      createDate: map['createDate'],
+      editDate: map['editDate'],
     );
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'title': title,
+      'isDone': isDone,
+      'createDate': createDate,
+      'editDate': editDate,
+    };
   }
 }
