@@ -1,7 +1,6 @@
 import 'dart:convert';
-import 'package:flutter/services.dart';
+// import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
-import 'package:home_widget/home_widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'task_model.dart';
 
@@ -12,28 +11,28 @@ class TaskProvider with ChangeNotifier {
   String _searchQuery = "";
 
   List<TaskModel> get _tasksList => tasksList;
-  List<TaskModel> get _filteredTaskList =>
-      _searchQuery.isEmpty ? tasksList : filteredTasksList;
+  // List<TaskModel> get _filteredTaskList =>
+  //     _searchQuery.isEmpty ? tasksList : filteredTasksList;
 
   bool appTheme = false;
-  bool get _appTheme => appTheme;
+  // bool get _appTheme => appTheme;
 
-  Future<void> _updateWidgetData() async {
-    final prefs = await SharedPreferences.getInstance();
-    // Serialize tasks to JSON
-    final tasksJson = json.encode(
-      tasksList.map((task) => task.toMap()).toList(),
-    );
-    await prefs.setString('flutter.tasks_json', tasksJson);
+  // Future<void> _updateWidgetData() async {
+  //   final prefs = await SharedPreferences.getInstance();
+  //   // Serialize tasks to JSON
+  //   final tasksJson = json.encode(
+  //     tasksList.map((task) => task.toMap()).toList(),
+  //   );
+  //   await prefs.setString('flutter.tasks_json', tasksJson);
 
-    // Trigger widget update
-    try {
-      const platform = MethodChannel('com.c.task/widget');
-      await platform.invokeMethod('updateWidget');
-    } catch (e) {
-      print('Widget update error: $e');
-    }
-  }
+  //   // Trigger widget update
+  //   try {
+  //     const platform = MethodChannel('com.c.task/widget');
+  //     await platform.invokeMethod('updateWidget');
+  //   } catch (e) {
+  //     // print('Widget update error: $e');
+  //   }
+  // }
 
   void searchTasks(String query) {
     _searchQuery = query.toLowerCase();
@@ -82,7 +81,7 @@ class TaskProvider with ChangeNotifier {
     }
 
     await saveTasks();
-    await _updateWidgetData();
+    // await _updateWidgetData();
     notifyListeners();
   }
 
@@ -103,7 +102,24 @@ class TaskProvider with ChangeNotifier {
     }
 
     await saveTasks();
-    await _updateWidgetData();
+    // await _updateWidgetData();
+    notifyListeners();
+  }
+
+  //refreshList
+  Future<void> refreshList() async {
+    // Clear the current lists
+    tasksList.clear();
+    filteredTasksList.clear();
+
+    // Reload from shared preferences
+    await loadTasks();
+
+    // Reapply search filter if there was one
+    if (_searchQuery.isNotEmpty) {
+      searchTasks(_searchQuery);
+    }
+
     notifyListeners();
   }
 
@@ -114,14 +130,23 @@ class TaskProvider with ChangeNotifier {
             ? index
             : tasksList.indexOf(filteredTasksList[index]);
 
-    tasksList.removeAt(index);
+    tasksList.removeAt(actualIndex);
 
     if (_searchQuery.isEmpty) {
       searchTasks(_searchQuery);
     }
 
     await saveTasks();
-    await _updateWidgetData();
+    // await _updateWidgetData();
     notifyListeners();
+  }
+
+  //deleteAllTask
+  Future<void> deleteAllTask() {
+    tasksList.clear();
+    filteredTasksList.clear();
+    _searchQuery = "";
+    notifyListeners();
+    return saveTasks();
   }
 }

@@ -36,7 +36,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     //controllers
     final listController = ScrollController();
-    final _searchController = SearchController();
+    final searchController = SearchController();
 
     //media query
     final screenWidth = MediaQuery.of(context).size.width;
@@ -64,7 +64,7 @@ class _HomePageState extends State<HomePage> {
                       vertical: 10,
                     ),
                     child: SearchBar(
-                      controller: _searchController,
+                      controller: searchController,
                       onChanged: (value) {
                         Provider.of<TaskProvider>(
                           context,

@@ -4,8 +4,10 @@ import 'package:flutter_remix/flutter_remix.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:page_animation_transition/animations/right_to_left_transition.dart';
 import 'package:page_animation_transition/page_animation_transition.dart';
+import 'package:provider/provider.dart';
 import 'package:task/pages/about_page.dart';
 import 'package:task/pages/theme_setting_page.dart';
+import 'package:task/util/task_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class SettingsPage extends StatelessWidget {
@@ -135,20 +137,19 @@ class SettingsPage extends StatelessWidget {
                                       context: context,
                                       builder:
                                           (context) => AlertDialog(
-                                            title: Text("Delete Data?"),
-                                            content: Row(
+                                            title: Text(
+                                              "Warning! ",
+                                              style: TextStyle(
+                                                color:
+                                                    Theme.of(
+                                                      context,
+                                                    ).colorScheme.error,
+                                              ),
+                                            ),
+                                            content: Wrap(
                                               children: [
                                                 Text(
-                                                  "Warning! ",
-                                                  style: TextStyle(
-                                                    color:
-                                                        Theme.of(
-                                                          context,
-                                                        ).colorScheme.error,
-                                                  ),
-                                                ),
-                                                Text(
-                                                  "Are you sure to delete All Data?",
+                                                  "Are you sure to delete All Tasks? if you delete you can't recovery the Tasks",
                                                 ),
                                               ],
                                             ),
@@ -173,7 +174,23 @@ class SettingsPage extends StatelessWidget {
                                                           ).colorScheme.error,
                                                         ),
                                                   ),
-                                                  onPressed: () {},
+                                                  onPressed: () {
+                                                    Provider.of<TaskProvider>(
+                                                      context,
+                                                      listen: false,
+                                                    ).deleteAllTask();
+                                                    Navigator.pop(context);
+                                                    ScaffoldMessenger.of(
+                                                      context,
+                                                    ).showSnackBar(
+                                                      SnackBar(
+                                                        content: Text(
+                                                          "All Tasks Deleted",
+                                                        ),
+                                                      ),
+                                                    );
+                                                    updateSystemOverlayStyle(context);
+                                                  },
                                                   child: Text("Delete"),
                                                 ),
                                               ),
