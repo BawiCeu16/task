@@ -12,7 +12,7 @@ class InfoPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final infoProvider = Provider.of<AppInfoProvider>(context, listen: false);
+    final appInfo = Provider.of<AppInfoProvider>(context);
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surfaceContainerLowest,
       appBar: AppBar(
@@ -27,32 +27,39 @@ class InfoPage extends StatelessWidget {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
-                    children: [
-                      CircleAvatar(
-                        radius: 60,
-                        child: CircleAvatar(
-                          radius: 55,
-
-                          backgroundImage: AssetImage(
-                            "assets/images/play_store_512.png",
+                  Card(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    elevation: 0,
+                    child: Padding(
+                      padding: EdgeInsetsGeometry.symmetric(
+                        vertical: 10,
+                        horizontal: 10,
+                      ),
+                      child: ListTile(
+                        leading: ClipRRect(
+                          borderRadius: BorderRadiusGeometry.circular(100),
+                          child: SizedBox(
+                            height: 55,
+                            width: 55,
+                            child: Image.asset(
+                              "assets/images/play_store_512.png",
+                            ),
                           ),
                         ),
+                        title: Text(
+                          appInfo.appName,
+                          style: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        subtitle: Text(
+                          'version: ${appInfo.version}\n package: ${appInfo.packageName}',
+                        ),
                       ),
-                    ],
-                  ),
-                  SizedBox(height: 20),
-                  Row(
-                    children: [
-                      Text(
-                        infoProvider.packageName,
-                        style: Theme.of(context).textTheme.headlineSmall,
-                      ),
-                      Text(
-                        infoProvider.version,
-                        style: Theme.of(context).textTheme.headlineSmall,
-                      ),
-                    ],
+                    ),
                   ),
                   SizedBox(height: 5),
                   Text(

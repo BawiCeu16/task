@@ -21,6 +21,9 @@ class BackupPage extends StatelessWidget {
                 borderRadius: BorderRadius.circular(12),
               ),
               child: ListTile(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadiusGeometry.circular(10),
+                ),
                 leading: const Icon(Icons.save_alt),
                 title: const Text("Backup to App Storage"),
                 subtitle: const Text(
@@ -44,6 +47,9 @@ class BackupPage extends StatelessWidget {
                 borderRadius: BorderRadius.circular(12),
               ),
               child: ListTile(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadiusGeometry.circular(10),
+                ),
                 leading: const Icon(Icons.restore),
                 title: const Text("Restore from App Storage"),
                 subtitle: const Text(
@@ -68,6 +74,9 @@ class BackupPage extends StatelessWidget {
                 borderRadius: BorderRadius.circular(12),
               ),
               child: ListTile(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadiusGeometry.circular(10),
+                ),
                 leading: const Icon(Icons.upload_file),
                 title: const Text("Export Backup"),
                 subtitle: const Text("Save tasks as JSON to a chosen location"),
@@ -87,6 +96,9 @@ class BackupPage extends StatelessWidget {
                 borderRadius: BorderRadius.circular(12),
               ),
               child: ListTile(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadiusGeometry.circular(10),
+                ),
                 leading: const Icon(Icons.download),
                 title: const Text("Import Backup"),
                 subtitle: const Text("Pick a JSON file and restore tasks"),
