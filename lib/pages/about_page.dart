@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_remix/flutter_remix.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class InfoPage extends StatelessWidget {
@@ -7,30 +8,35 @@ class InfoPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("About")),
+      backgroundColor: Theme.of(context).colorScheme.surfaceContainerLowest,
+      appBar: AppBar(
+        backgroundColor: Theme.of(context).colorScheme.surfaceContainerLowest,
+        title: Text("About"),
+      ),
       body: SingleChildScrollView(
-        child: Column(
-          children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(left: 20, top: 20),
-                      child: CircleAvatar(
-                        radius: 55,
-                        backgroundImage: AssetImage(
-                          "assets/play_store_512.png",
+        child: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Column(
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      CircleAvatar(
+                        radius: 60,
+                        child: CircleAvatar(
+                          radius: 55,
+
+                          backgroundImage: AssetImage(
+                            "assets/play_store_512.png",
+                          ),
                         ),
                       ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 20),
-                Padding(
-                  padding: const EdgeInsets.only(left: 25),
-                  child: Row(
+                    ],
+                  ),
+                  SizedBox(height: 20),
+                  Row(
                     children: [
                       Text(
                         "task",
@@ -43,77 +49,244 @@ class InfoPage extends StatelessWidget {
                       ),
                     ],
                   ),
-                ),
-                SizedBox(height: 5),
-                Padding(
-                  padding: const EdgeInsets.only(left: 25, right: 20),
-                  child: Text(
-                    "       This task app lets you add tasks easily and toggle them to mark as complete. Long-press to delete tasks quickly. Enjoy an ad-free experience with all your tasks save in local storage (no internet required).",
+                  SizedBox(height: 5),
+                  Text(
+                    "       Effortlessly manage your tasks with this open-source app! Easily add, toggle, and delete tasks with a long-press. Enjoy an ad-free experience with all data stored locally—no internet needed. Available only on APKPure and GitHub for security. No unnecessary permissions, just simple, private task management with monthly updates for a seamless experience.",
                   ),
-                ),
-                SizedBox(height: 5),
-                Padding(
-                  padding: const EdgeInsets.only(left: 25, right: 20),
-                  child: Text(
-                    "        App is only officially available on APKPure—downloads from other sources are not legitimate, and we take no responsibility for them.Additionally, this app does not request any special permissions (such as camera, contacts, or location) since it only uses local storage to save your tasks, ensuring your privacy and security.",
-                  ),
-                ),
-                SizedBox(height: 5),
-                Padding(
-                  padding: const EdgeInsets.only(left: 25, right: 20),
-                  child: Text(
-                    "       The developer releases monthly updates to fix bugs and improve the UI, providing a smooth and user-friendly experience. Stay organized effortlessly.",
-                  ),
-                ),
-                SizedBox(height: 30),
-                Center(
-                  child: InkWell(
-                    borderRadius: BorderRadius.circular(100),
-                    onTap: () {
-                      launchUrl(Uri.parse("https://github.com/bawiceu16/task"));
-                    },
+                  SizedBox(height: 15),
+
+                  Card(
+                    elevation: 0,
                     child: Padding(
-                      padding: const EdgeInsets.only(left: 5, right: 5),
-                      child: Text(
-                        "This app's Open-Source",
-                        style: TextStyle(
-                          color: Theme.of(context).colorScheme.primary,
-                          fontWeight: FontWeight.bold,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 20,
+                        vertical: 10,
+                      ),
+                      child: RichText(
+                        text: TextSpan(
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.onSurface,
+                            height: 1.5,
+                          ),
+                          children: const [
+                            //Features
+                            TextSpan(
+                              text: 'Informations:\n',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 18,
+                              ),
+                            ),
+                            TextSpan(
+                              text: '• ',
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                            TextSpan(
+                              text: 'Open-source',
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                            TextSpan(
+                              text:
+                                  ' – Transparent and community-driven development.\n',
+                            ),
+
+                            TextSpan(
+                              text: '• ',
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                            TextSpan(
+                              text: 'Easy task management',
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                            TextSpan(
+                              text:
+                                  ' – Add and mark tasks as complete with a toggle.\n',
+                            ),
+
+                            TextSpan(
+                              text: '• ',
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                            TextSpan(
+                              text: 'Quick deletion',
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                            TextSpan(
+                              text:
+                                  ' – Long-press to remove tasks instantly.\n',
+                            ),
+
+                            TextSpan(
+                              text: '• ',
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                            TextSpan(
+                              text: 'Ad-free experience',
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                            TextSpan(
+                              text: ' – No distractions or interruptions.\n',
+                            ),
+
+                            TextSpan(
+                              text: '• ',
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                            TextSpan(
+                              text: 'Local storage',
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                            TextSpan(
+                              text:
+                                  ' – Saves tasks offline; no internet required.\n',
+                            ),
+
+                            TextSpan(
+                              text: '• ',
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                            TextSpan(
+                              text: 'No unnecessary permissions',
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                            TextSpan(
+                              text:
+                                  ' – Doesn’t access camera, contacts, or location etc.\n',
+                            ),
+
+                            TextSpan(
+                              text: '• ',
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                            TextSpan(
+                              text: 'Secure & private',
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                            TextSpan(
+                              text: ' – Your data stays on your device.\n',
+                            ),
+
+                            TextSpan(
+                              text: '• ',
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                            TextSpan(
+                              text: 'Monthly updates',
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                            TextSpan(
+                              text:
+                                  ' – Regular bug fixes and UI improvements.\n',
+                            ),
+
+                            TextSpan(
+                              text: '• ',
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                            TextSpan(
+                              text: 'Official sources only',
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                            TextSpan(text: ' – Available exclusively on '),
+                            TextSpan(
+                              text: 'APKPure',
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                            TextSpan(text: ' and '),
+                            TextSpan(
+                              text: 'GitHub',
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                            TextSpan(text: ' (Source Code).\n'),
+
+                            TextSpan(
+                              text: '• ',
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                            TextSpan(
+                              text: 'Lightweight & smooth',
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                            TextSpan(
+                              text:
+                                  ' – Optimized for a user-friendly experience.',
+                            ),
+                          ],
                         ),
                       ),
                     ),
                   ),
-                ),
-              ],
-            ),
-            SizedBox(height: 5),
-            Card(
-              elevation: 0,
-              child: InkWell(
-                borderRadius: BorderRadius.circular(100),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 10,
-                    vertical: 2,
-                  ),
-                  child: Text(
-                    "privacy . policy",
-                    style: TextStyle(
-                      color: Theme.of(context).colorScheme.primary,
+                  /////////////////////////////////////////////////////////////////////////////////////////////
+                  const SizedBox(height: 30),
+                  Center(
+                    child: SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.5,
+                      child: Card(
+                        elevation: 0,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(100),
+                        ),
+                        child: InkWell(
+                          borderRadius: BorderRadius.circular(100),
+                          onTap: () {
+                            launchUrl(
+                              Uri.parse("https://github.com/bawiceu16/task"),
+                            );
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 10,
+                              vertical: 10,
+                            ),
+                            child: Row(
+                              children: [
+                                Icon(FlutterRemix.github_fill),
+                                SizedBox(width: 5),
+                                Text(
+                                  "Open-Source project",
+                                  style: TextStyle(
+                                    color:
+                                        Theme.of(context).colorScheme.primary,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
                     ),
                   ),
-                ),
-                onTap: () {
-                  launchUrl(
-                    Uri.parse(
-                      "https://bawiceu16.github.io/task-privacy-and-policy-/",
-                    ),
-                  );
-                },
+                ],
               ),
-            ),
-            SizedBox(height: 5),
-          ],
+              const SizedBox(height: 5),
+              Card(
+                elevation: 0,
+                child: InkWell(
+                  borderRadius: BorderRadius.circular(100),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 2,
+                    ),
+                    child: Text(
+                      "privacy · policy",
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
+                    ),
+                  ),
+                  onTap: () {
+                    launchUrl(
+                      Uri.parse(
+                        "https://bawiceu16.github.io/task-privacy-and-policy-/",
+                      ),
+                    );
+                  },
+                ),
+              ),
+              SizedBox(height: 5),
+            ],
+          ),
         ),
       ),
     );
