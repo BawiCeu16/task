@@ -1,35 +1,48 @@
-<p align="center"><img src="https://github.com/BawiCeu16/task/blob/main/android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png?raw=true" alt="project-image"></p>
-<h1 align="center" id="title">task</h1>
+# Task — Simple To-Do App
 
-<p id="description">  This is my first open-source app and i'm still beginner, the project might be very simple.</p>
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-<h2>Project Screenshots:</h2>
+This is my first open-source app built with Flutter.  
+It started as a simple to-do list, and now includes more features for a complete task management experience.  
+*(This app might have errors in some features.)*
 
-<h3 id="home_page">HomePage</h3>
-<img src="https://github.com/BawiCeu16/task/blob/main/screen_shots/home_page.png?raw=true" alt="project-screenshot" width="300" height="680/">
+---
 
-<h3 id="add_task_page">Add task</h3>
-<img src="https://github.com/BawiCeu16/task/blob/main/screen_shots/add_task.png?raw=true" alt="project-screenshot" width="300" height="680/">
+## ✨ Features
+- ➕ Add new tasks  
+- ✅ Toggle tasks as done/undone  
+- ✏️ Long press to edit or toggle task  
+- 💾 Save tasks locally with SharedPreferences (persist until app data is cleared)  
+- ℹ️ **InfoPage** → Display app information and features  
+- 📂 **BackupPage** → Backup & restore tasks  
+- 🏠 **HomePage** → Task management with search and edit  
+- ⚙️ **SettingsPage** → Theme selection and data management  
+- 🎨 **Theme Settings** → Light/Dark & custom themes  
+- 🖊️ **EditTaskDialog** → Edit tasks with date info  
+- 📦 **AppInfoProvider** → App version & package details  
+- 🖥️ **Linux UI** → Native Yaru design integration  
 
-  
-  
-<h2>Features</h2>
+---
 
-Here're some of the project's best features:
+## 📸 Screenshots
 
-*   add task
-*   toggle Task
-*   toggle Task (long press to the task)
-*   save Tasks in your device (until you clear the app data)
+| Android - Home(Light) | Android - Edit Task(Dark) | Linux - Home(Light) | Linux - Edit Task(Dark) |
+|-----------|----------|----------|--------|
+| ![Android - Home(Light)](https://github.com/BawiCeu16/task/blob/main/assets/screenshorts/android/homepage_light.png?raw=true) | ![Android - Edit Task(Dark)](https://github.com/BawiCeu16/task/blob/main/assets/screenshorts/android/edit_dark.png?raw=true) | ![Linux - Home(Light)](https://github.com/BawiCeu16/task/blob/main/assets/screenshorts/linux/homepage_light%20.png?raw=true) | ![Linux - Edit Task(Dark)](https://github.com/BawiCeu16/task/blob/main/assets/screenshorts/linux/edit_dark.png?raw=true) |
 
-<h2>🛠️ Installation Steps:</h2>
+---
 
-<p>1. Download the Project and code whatever you want</p>
-  
-<h2>💻 Built with</h2>
+## 🚀 Getting Started
 
-store the tasks in SharedPreference
+```bash
+┌──(user㉿kali)-[~]
+└─$ git clone https://github.com/BawiCeu16/task.git
 
-<h2>🛡️ License:</h2>
+┌──(user㉿kali)-[~]
+└─$ cd task
 
-This project is licensed under the MIT Licen
+┌──(user㉿kali)-[~/task]
+└─$ flutter pub get
+
+┌──(user㉿kali)-[~/task]
+└─$ flutter run
