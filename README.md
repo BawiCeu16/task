@@ -26,9 +26,17 @@ It started as a simple to-do list, and now includes more features for a complete
 
 ## 📸 Screenshots
 
-| Android - Home(Light) | Android - Edit Task(Dark) | Linux - Home(Light) | Linux - Edit Task(Dark) |
-|-----------|----------|----------|--------|
+| Android - Home (Light) | Android - Edit Task (Dark) | Linux - Home (Light) | Linux - Edit Task (Dark) |
+|------------------------|----------------------------|-----------------------|---------------------------|
 | ![Android - Home(Light)](https://github.com/BawiCeu16/task/blob/main/assets/screenshorts/android/homepage_light.png?raw=true) | ![Android - Edit Task(Dark)](https://github.com/BawiCeu16/task/blob/main/assets/screenshorts/android/edit_dark.png?raw=true) | ![Linux - Home(Light)](https://github.com/BawiCeu16/task/blob/main/assets/screenshorts/linux/homepage_light%20.png?raw=true) | ![Linux - Edit Task(Dark)](https://github.com/BawiCeu16/task/blob/main/assets/screenshorts/linux/edit_dark.png?raw=true) |
+
+---
+
+## 📱 Supported Devices & Design
+
+- ✅ **Android** → Material 3 Design  
+- ✅ **Linux** → Yaru Design (Ubuntu-like native look)  
+- ❓ **Others (iOS, Windows, macOS, Web)** → Not tested  
 
 ---
 
