@@ -26,7 +26,12 @@ class Appearance_Settings extends StatelessWidget {
 
     final currentMode = themeProvider.themeMode;
     final seedColor = themeProvider.seedColor;
+    final themeSource = themeProvider.themeSource;
     final isMono = themeProvider.isMonochrome;
+    final isDynamic = themeProvider.isDynamic;
+
+    final bool supportsDynamicColor =
+        Theme.of(context).platform == TargetPlatform.android;
 
     return Scaffold(
       appBar: AppBar(
@@ -102,7 +107,7 @@ class Appearance_Settings extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 4),
-                    const Text('App theme mode (saved automatically)'),
+                    const Text('Select theme mode.'),
                     const SizedBox(height: 12),
 
                     // Chips row
@@ -207,54 +212,107 @@ class Appearance_Settings extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Accent  color',
+                      'Accent color',
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
-
-                        color: Theme.of(context).colorScheme.primary,
+                        color: themeSource == ThemeSource.manual
+                            ? Theme.of(context).colorScheme.primary
+                            : Theme.of(context).colorScheme.outline,
                       ),
                     ),
-                    Text('Pick a color to generate the app palette'),
-
-                    SizedBox(height: 10),
-                    Wrap(
-                      spacing: 10,
-                      runSpacing: 10,
-                      children: _palette.map((c) {
-                        final selected = c.value == seedColor.value;
-                        return InkWell(
-                          borderRadius: BorderRadius.circular(100),
-                          onTap: () => themeProvider.setSeedColor(c),
-                          child: AnimatedContainer(
-                            duration: const Duration(milliseconds: 220),
-                            padding: const EdgeInsets.all(4),
-                            decoration: BoxDecoration(
+                    Text(
+                      themeSource == ThemeSource.manual
+                          ? 'Pick an accent color.'
+                          : 'Selection is disabled in ${themeSource == ThemeSource.monochrome ? 'Monochrome' : 'Dynamic'} mode.',
+                      style: TextStyle(
+                        color: themeSource == ThemeSource.manual
+                            ? null
+                            : Theme.of(context).colorScheme.outline,
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    AbsorbPointer(
+                      absorbing: themeSource != ThemeSource.manual,
+                      child: Opacity(
+                        opacity: themeSource == ThemeSource.manual ? 1.0 : 0.5,
+                        child: Wrap(
+                          spacing: 10,
+                          runSpacing: 10,
+                          children: _palette.map((c) {
+                            final selected = c.value == seedColor.value;
+                            return InkWell(
                               borderRadius: BorderRadius.circular(100),
-                              border: selected
-                                  ? Border.all(
-                                      width: 2,
-                                      color: Theme.of(
-                                        context,
-                                      ).colorScheme.primary,
-                                    )
-                                  : Border.all(
-                                      width: 1,
-                                      color: Colors.transparent,
-                                    ),
-                            ),
-                            child: CircleAvatar(
-                              backgroundColor: c,
-                              radius: selected ? 20 : 19,
-                            ),
-                          ),
-                        );
-                      }).toList(),
+                              onTap: () => themeProvider.setSeedColor(c),
+                              child: AnimatedContainer(
+                                duration: const Duration(milliseconds: 220),
+                                padding: const EdgeInsets.all(4),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(100),
+                                  border:
+                                      selected &&
+                                          themeSource == ThemeSource.manual
+                                      ? Border.all(
+                                          width: 2,
+                                          color: Theme.of(
+                                            context,
+                                          ).colorScheme.primary,
+                                        )
+                                      : Border.all(
+                                          width: 1,
+                                          color: Colors.transparent,
+                                        ),
+                                ),
+                                child: CircleAvatar(
+                                  backgroundColor: c,
+                                  radius: selected ? 20 : 19,
+                                ),
+                              ),
+                            );
+                          }).toList(),
+                        ),
+                      ),
                     ),
                   ],
                 ),
               ),
             ),
+
+            // --- Wallpaper Scheme (Android only) ---
+            if (supportsDynamicColor) ...[
+              const SizedBox(height: 3),
+              Card(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadiusGeometry.only(
+                    topLeft: Radius.circular(5.0),
+                    topRight: Radius.circular(5.0),
+                    bottomLeft: Radius.circular(5.0),
+                    bottomRight: Radius.circular(5.0),
+                  ),
+                ),
+                elevation: 0,
+                margin: EdgeInsets.zero,
+
+                child: SwitchListTile(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadiusGeometry.only(
+                      topLeft: Radius.circular(5.0),
+                      topRight: Radius.circular(5.0),
+                      bottomLeft: Radius.circular(5.0),
+                      bottomRight: Radius.circular(5.0),
+                    ),
+                  ),
+                  title: const Text('Dynamic color'),
+                  subtitle: const Text('Use wallpaper colors.'),
+                  value: isDynamic,
+                  onChanged: (v) {
+                    themeProvider.setThemeSource(
+                      v ? ThemeSource.dynamic : ThemeSource.manual,
+                    );
+                  },
+                ),
+              ),
+            ],
 
             const SizedBox(height: 3),
 
@@ -270,7 +328,6 @@ class Appearance_Settings extends StatelessWidget {
                   bottomRight: Radius.circular(10),
                 ),
               ),
-
               child: SwitchListTile(
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadiusGeometry.only(
@@ -280,18 +337,21 @@ class Appearance_Settings extends StatelessWidget {
                     bottomRight: Radius.circular(10),
                   ),
                 ),
-
-                title: const Text('Monochrome theme'),
-                subtitle: const Text('Use monochrome palettes (high contrast)'),
+                title: const Text('Monochrome'),
+                subtitle: const Text('Use monochrome palettes.'),
                 value: isMono,
-                onChanged: (v) => themeProvider.setMonochromeEnabled(v),
+                onChanged: (v) {
+                  themeProvider.setThemeSource(
+                    v ? ThemeSource.monochrome : ThemeSource.manual,
+                  );
+                },
               ),
             ),
 
             const SizedBox(height: 10),
 
             Text(
-              'Button & List',
+              'Components',
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
@@ -305,9 +365,8 @@ class Appearance_Settings extends StatelessWidget {
             // --- Button Settings ---
             TopListTile(
               leading: Icon(remixIcon(Icons.height)),
-              title: 'Button settings',
-              subtitle:
-                  'Current heighst: ${themeProvider.buttonHeight.toStringAsFixed(1)}',
+              title: 'Buttons',
+              subtitle: 'Adjust button height and radius.',
 
               onTap: () {
                 showDialog(
@@ -319,8 +378,8 @@ class Appearance_Settings extends StatelessWidget {
             const SizedBox(height: 3),
             BottomListTile(
               leading: Icon(remixIcon(Icons.layers_outlined)),
-              title: 'Card & List settings',
-              subtitle: 'Adjust cards and list items corner radius.',
+              title: 'Cards',
+              subtitle: 'Adjust corner radius.',
               onTap: () {
                 showDialog(
                   context: context,

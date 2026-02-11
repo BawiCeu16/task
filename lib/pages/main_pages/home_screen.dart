@@ -6,9 +6,9 @@ import 'package:provider/provider.dart';
 import 'package:task/provider/task_provider.dart';
 import 'package:task/widgets/create_dialog.dart';
 import 'package:task/pages/main_pages/folder_page.dart';
-import 'package:task/widgets/list_item.dart';
-import 'package:task/widgets/icon_mapper.dart';
 import 'package:task/pages/main_pages/search_page.dart';
+import 'package:task/widgets/task_list_view.dart';
+import 'package:task/widgets/icon_mapper.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -253,6 +253,7 @@ class _MainPage extends StatelessWidget {
 
     return CustomScrollView(
       physics: const BouncingScrollPhysics(),
+
       slivers: [
         SliverAppBar(
           title: const Text('Tasks'),
@@ -265,271 +266,17 @@ class _MainPage extends StatelessWidget {
         if (tasks.isEmpty)
           const SliverFillRemaining(child: Center(child: Text('No tasks')))
         else
-          SliverPadding(
-            padding: const EdgeInsets.symmetric(vertical: 8),
-            sliver: SliverList(
-              delegate: SliverChildBuilderDelegate((context, index) {
-                final task = tasks[index];
-                final title = (task['task'] ?? '') as String;
-                final isDone = (task['isDone'] ?? false) as bool;
-                final date = (task['createdDate'] ?? '') as String;
-                final id = (task['id'] ?? '') as String;
-                final color = task['color'] as int?;
-                final realIndex = Provider.of<TaskProvider>(
-                  context,
-                  listen: false,
-                ).tasks.indexWhere((t) => (t['id'] ?? '') == id);
-
-                return Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 10,
-                    vertical: 5,
-                  ),
-                  child: MyListItem(
-                    title: title,
-                    isDone: isDone,
-                    date: date,
-                    color: color,
-                    onTap: () {
-                      if (realIndex != -1) {
-                        Provider.of<TaskProvider>(
-                          context,
-                          listen: false,
-                        ).toggleIsDone(realIndex);
-                      }
-                    },
-                    onLongPress: () {
-                      if (realIndex != -1) {
-                        _showTaskBottomSheet(
-                          context,
-                          provider,
-                          realIndex,
-                          task,
-                        );
-                      }
-                    },
-                  ),
-                );
-              }, childCount: tasks.length),
-            ),
+          TaskListView(
+            tasks: tasks,
+            provider: provider,
+            isSliver: true,
+            showChart: true,
           ),
       ],
     );
   }
 
   // list / content area (removed as it's now integrated above)
-
-  void _showTaskBottomSheet(
-    BuildContext context,
-    TaskProvider provider,
-    int realIndex,
-    Map<String, dynamic> task,
-  ) {
-    final title = (task['task'] ?? '') as String;
-    final isDone = (task['isDone'] ?? false) as bool;
-    final date = (task['createdDate'] ?? '') as String;
-    final folder = (task['folder'] ?? '') as String;
-    final category = (task['category'] ?? '') as String;
-
-    showModalBottomSheet(
-      elevation: 0,
-      backgroundColor: Theme.of(context).colorScheme.surface,
-      context: context,
-      builder: (_) => Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-        child: SafeArea(
-          child: Wrap(
-            children: [
-              ListTile(
-                contentPadding: const EdgeInsets.all(0),
-                title: Text(title),
-                subtitle: Builder(
-                  builder: (context) {
-                    String formattedDate = date;
-                    try {
-                      final dt = DateTime.parse(date).toLocal();
-                      formattedDate =
-                          "${dt.year}-${dt.month.toString().padLeft(2, '0')}-${dt.day.toString().padLeft(2, '0')} | ${dt.hour}:${dt.minute.toString().padLeft(2, '0')}.${dt.second.toString().padLeft(2, '0')}";
-                    } catch (_) {}
-                    return Text(formattedDate);
-                  },
-                ),
-              ),
-              Card(
-                elevation: 0,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(100),
-                ),
-                child: SwitchListTile(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(100),
-                  ),
-                  title: const Text('Done'),
-                  value: isDone,
-                  onChanged: (_) {
-                    Provider.of<TaskProvider>(
-                      context,
-                      listen: false,
-                    ).toggleIsDone(realIndex);
-                    Navigator.pop(context);
-                  },
-                ),
-              ),
-              Card(
-                elevation: 0,
-                margin: const EdgeInsets.only(top: 0, bottom: 1.5),
-                shape: const RoundedRectangleBorder(
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(10),
-                    topRight: Radius.circular(10),
-                    bottomLeft: Radius.circular(5),
-                    bottomRight: Radius.circular(5),
-                  ),
-                ),
-                child: ListTile(
-                  shape: const RoundedRectangleBorder(
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(10),
-                      topRight: Radius.circular(10),
-                      bottomLeft: Radius.circular(5),
-                      bottomRight: Radius.circular(5),
-                    ),
-                  ),
-                  leading: Icon(remixIcon(Icons.edit)),
-                  title: const Text('Edit'),
-                  onTap: () {
-                    Navigator.pop(context);
-                    showDialog(
-                      context: context,
-                      builder: (_) => MyCreateDialog(
-                        initialText: title,
-                        initialFolder: task['folder'] as String?,
-                        initialCategory: task['category'] as String?,
-                        initialIsDone: isDone,
-                        initialColor: task['color'] as int?,
-                        onTapSave: (taskName, isDone, folder, category, color) {
-                          Provider.of<TaskProvider>(
-                            context,
-                            listen: false,
-                          ).editTask(
-                            realIndex,
-                            taskName,
-                            isDone: isDone,
-                            folder: folder,
-                            category: category,
-                            color: color,
-                          );
-                        },
-                      ),
-                    );
-                  },
-                ),
-              ),
-              Card(
-                elevation: 0,
-                margin: const EdgeInsets.symmetric(vertical: 1.5),
-                shape: const RoundedRectangleBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(5)),
-                ),
-                child: ListTile(
-                  shape: const RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(5)),
-                  ),
-                  leading: Icon(remixIcon(Icons.info)),
-                  title: const Text('Info'),
-                  onTap: () {
-                    Navigator.pop(context);
-                    showDialog(
-                      context: context,
-                      builder: (_) => AlertDialog(
-                        content: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text("Task: $title"),
-                            Text("Date: $date"),
-                            Text("Folder: $folder"),
-                            Text("Category: $category"),
-                            Text("Is Done: $isDone"),
-                          ],
-                        ),
-                        actions: [
-                          FilledButton(
-                            onPressed: () => Navigator.pop(context),
-                            child: const Text('Close'),
-                          ),
-                        ],
-                        title: const Text('Info'),
-                      ),
-                    );
-                  },
-                ),
-              ),
-              Card(
-                elevation: 0,
-                margin: const EdgeInsets.only(top: 1.5),
-                shape: const RoundedRectangleBorder(
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(5),
-                    topRight: Radius.circular(5),
-                    bottomLeft: Radius.circular(10),
-                    bottomRight: Radius.circular(10),
-                  ),
-                ),
-                child: ListTile(
-                  shape: const RoundedRectangleBorder(
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(5),
-                      topRight: Radius.circular(5),
-                      bottomLeft: Radius.circular(10),
-                      bottomRight: Radius.circular(10),
-                    ),
-                  ),
-                  leading: Icon(
-                    remixIcon(Icons.delete),
-                    color: Theme.of(context).colorScheme.error,
-                  ),
-                  title: const Text('Delete'),
-                  onTap: () async {
-                    bool confirm = true;
-                    if (provider.confirmDelete) {
-                      confirm =
-                          await showDialog<bool>(
-                            context: context,
-                            builder: (_) => AlertDialog(
-                              title: const Text('Delete task?'),
-                              content: Text('Delete "$title"?'),
-                              actions: [
-                                FilledButton.tonal(
-                                  onPressed: () =>
-                                      Navigator.pop(context, false),
-                                  child: const Text('Cancel'),
-                                ),
-                                FilledButton(
-                                  style: ButtonStyle(
-                                    backgroundColor: WidgetStatePropertyAll(
-                                      Theme.of(context).colorScheme.error,
-                                    ),
-                                  ),
-                                  onPressed: () => Navigator.pop(context, true),
-                                  child: const Text('Delete'),
-                                ),
-                              ],
-                            ),
-                          ) ??
-                          false;
-                    }
-                    Navigator.pop(context);
-                    if (confirm) provider.deleteTask(realIndex);
-                  },
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
 
   String _labelForFilter(TaskFilter f) {
     switch (f) {

@@ -4,8 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+enum ThemeSource { manual, dynamic, monochrome }
+
 /// ThemeProvider for the "fuck tasks" app (light-weight, no music-player features).
-/// - Persists ThemeMode, seed color and monochrome toggle in SharedPreferences.
+/// - Persists ThemeMode, seed color and theme source in SharedPreferences.
 /// - Provides ThemeData for light and dark modes (Material 3, ColorScheme.fromSeed).
 /// - Intentionally does NOT include image-based dynamic color extraction or
 ///   now-playing specific features (to avoid unnecessary complexity).
@@ -13,15 +15,19 @@ class ThemeProvider with ChangeNotifier {
   // ---- Fields ----
   ThemeMode _themeMode = ThemeMode.system;
   Color _seedColor = Colors.blue;
-  bool _isMonochrome = false;
+  ThemeSource _themeSource = ThemeSource.manual;
   double _buttonHeight = 45.0;
   double _buttonRadius = 100.0;
   double _cardRadius = 12.0;
 
+  // Dynamic color storage (updated from main.dart)
+  ColorScheme? _dynamicLight;
+  ColorScheme? _dynamicDark;
+
   // Preference keys
   static const String _prefsKeyMode = 'ft_theme_mode';
   static const String _prefsKeySeed = 'ft_seed_color';
-  static const String _prefsKeyMono = 'ft_is_monochrome';
+  static const String _prefsKeySource = 'ft_theme_source';
   static const String _prefsKeyButtonHeight = 'ft_button_height';
   static const String _prefsKeyButtonRadius = 'ft_button_radius';
   static const String _prefsKeyCardRadius = 'ft_card_radius';
@@ -29,7 +35,9 @@ class ThemeProvider with ChangeNotifier {
   // ---- Getters ----
   ThemeMode get themeMode => _themeMode;
   Color get seedColor => _seedColor;
-  bool get isMonochrome => _isMonochrome;
+  ThemeSource get themeSource => _themeSource;
+  bool get isMonochrome => _themeSource == ThemeSource.monochrome;
+  bool get isDynamic => _themeSource == ThemeSource.dynamic;
   double get buttonHeight => _buttonHeight;
   double get buttonRadius => _buttonRadius;
   double get cardRadius => _cardRadius;
@@ -53,7 +61,15 @@ class ThemeProvider with ChangeNotifier {
         _seedColor = Color(seedValue);
       }
 
-      _isMonochrome = prefs.getBool(_prefsKeyMono) ?? false;
+      final sourceStr = prefs.getString(_prefsKeySource);
+      if (sourceStr == 'dynamic') {
+        _themeSource = ThemeSource.dynamic;
+      } else if (sourceStr == 'monochrome') {
+        _themeSource = ThemeSource.monochrome;
+      } else {
+        _themeSource = ThemeSource.manual;
+      }
+
       _buttonHeight = prefs.getDouble(_prefsKeyButtonHeight) ?? 45.0;
       _buttonRadius = prefs.getDouble(_prefsKeyButtonRadius) ?? 100.0;
       _cardRadius = prefs.getDouble(_prefsKeyCardRadius) ?? 12.0;
@@ -61,7 +77,7 @@ class ThemeProvider with ChangeNotifier {
       // keep defaults on error
       _themeMode = ThemeMode.system;
       _seedColor = Colors.blue;
-      _isMonochrome = false;
+      _themeSource = ThemeSource.manual;
       _buttonHeight = 45.0;
       _buttonRadius = 100.0;
       _cardRadius = 12.0;
@@ -94,13 +110,19 @@ class ThemeProvider with ChangeNotifier {
     } catch (_) {}
   }
 
-  Future<void> setMonochromeEnabled(bool enabled) async {
-    _isMonochrome = enabled;
+  Future<void> setThemeSource(ThemeSource source) async {
+    _themeSource = source;
     notifyListeners();
     try {
       final prefs = await SharedPreferences.getInstance();
-      await prefs.setBool(_prefsKeyMono, enabled);
+      await prefs.setString(_prefsKeySource, source.name);
     } catch (_) {}
+  }
+
+  void updateDynamicColors(ColorScheme? light, ColorScheme? dark) {
+    _dynamicLight = light;
+    _dynamicDark = dark;
+    notifyListeners();
   }
 
   Future<void> setButtonHeight(double height) async {
@@ -147,58 +169,44 @@ class ThemeProvider with ChangeNotifier {
     return HSLColor.fromAHSL(h.alpha, h.hue, s, l).toColor();
   }
 
-  // ---- Monochrome Schemes (simple, safe) ----
-  ColorScheme _monochromeLightScheme() {
-    return const ColorScheme(
-      brightness: Brightness.light,
-      primary: Color(0xFF111111),
-      onPrimary: Color(0xFFFFFFFF),
-      secondary: Color(0xFF444444),
-      onSecondary: Color(0xFFFFFFFF),
-      error: Color(0xFFB00020),
-      onError: Color(0xFFFFFFFF),
-      background: Color(0xFFFFFFFF),
-      onBackground: Color(0xFF000000),
-      surface: Color(0xFFF2F2F2),
-      surfaceContainerLow: Color(0xFFE8E8E8),
-      onSurface: Color(0xFF000000),
-      primaryContainer: Color(0xFF222222),
-      onPrimaryContainer: Color(0xFFFFFFFF),
-      secondaryContainer: Color(0xFF666666),
-      onSecondaryContainer: Color(0xFFFFFFFF),
-      surfaceVariant: Color(0xFFEAEAEA),
-      outline: Color(0xFFBBBBBB),
-      shadow: Color(0xFF000000),
-      inverseSurface: Color(0xFF1A1A1A),
-      onInverseSurface: Color(0xFFFFFFFF),
-      inversePrimary: Color(0xFFEEEEEE),
-    );
-  }
+  // ---- Monochrome Helper: Dynamically desaturate a scheme ----
+  ColorScheme _toGrayscale(ColorScheme cs) {
+    Color desaturate(Color c) {
+      final hsl = HSLColor.fromColor(c);
+      return hsl.withSaturation(0).toColor();
+    }
 
-  ColorScheme _monochromeDarkScheme() {
-    return const ColorScheme(
-      brightness: Brightness.dark,
-      primary: Color(0xFFFFFFFF),
-      onPrimary: Color(0xFF000000),
-      secondary: Color(0xFFDDDDDD),
-      onSecondary: Color(0xFF000000),
-      error: Color(0xFFCF6679),
-      onError: Color(0xFF000000),
-      background: Color(0xFF000000),
-      onBackground: Color(0xFFFFFFFF),
-      surface: Color(0xFF000000),
-      surfaceContainerLow: Color(0xFF0A0A0A),
-      onSurface: Color(0xFFBFBFBF),
-      primaryContainer: Color(0xFFEEEEEE),
-      onPrimaryContainer: Color(0xFF000000),
-      secondaryContainer: Color(0xFFBFBFBF),
-      onSecondaryContainer: Color(0xFF000000),
-      surfaceVariant: Color(0xFF1E1E1E),
-      outline: Color(0xFF444444),
-      shadow: Color(0xFF000000),
-      inverseSurface: Color(0xFFFFFFFF),
-      onInverseSurface: Color(0xFF000000),
-      inversePrimary: Color(0xFF000000),
+    return cs.copyWith(
+      primary: desaturate(cs.primary),
+      onPrimary: desaturate(cs.onPrimary),
+      primaryContainer: desaturate(cs.primaryContainer),
+      onPrimaryContainer: desaturate(cs.onPrimaryContainer),
+      secondary: desaturate(cs.secondary),
+      onSecondary: desaturate(cs.onSecondary),
+      secondaryContainer: desaturate(cs.secondaryContainer),
+      onSecondaryContainer: desaturate(cs.onSecondaryContainer),
+      tertiary: desaturate(cs.tertiary),
+      onTertiary: desaturate(cs.onTertiary),
+      tertiaryContainer: desaturate(cs.tertiaryContainer),
+      onTertiaryContainer: desaturate(cs.onTertiaryContainer),
+      error: desaturate(cs.error),
+      onError: desaturate(cs.onError),
+      errorContainer: desaturate(cs.errorContainer),
+      onErrorContainer: desaturate(cs.onErrorContainer),
+      background: desaturate(cs.background),
+      onBackground: desaturate(cs.onBackground),
+      surface: desaturate(cs.surface),
+      onSurface: desaturate(cs.onSurface),
+      surfaceVariant: desaturate(cs.surfaceVariant),
+      onSurfaceVariant: desaturate(cs.onSurfaceVariant),
+      outline: desaturate(cs.outline),
+      outlineVariant: desaturate(cs.outlineVariant),
+      shadow: desaturate(cs.shadow),
+      scrim: desaturate(cs.scrim),
+      inverseSurface: desaturate(cs.inverseSurface),
+      onInverseSurface: desaturate(cs.onInverseSurface),
+      inversePrimary: desaturate(cs.inversePrimary),
+      surfaceTint: desaturate(cs.surfaceTint),
     );
   }
 
@@ -217,17 +225,28 @@ class ThemeProvider with ChangeNotifier {
 
   // ---- ThemeData getters ----
   ThemeData get lightTheme {
-    final cs = _isMonochrome
-        ? _monochromeLightScheme()
-        : ColorScheme.fromSeed(
-            seedColor: _boostColor(_seedColor),
-            brightness: Brightness.light,
-          );
+    ColorScheme cs;
+
+    if (_themeSource == ThemeSource.dynamic && _dynamicLight != null) {
+      cs = ColorScheme.fromSeed(
+        seedColor: _dynamicLight!.primary,
+        brightness: Brightness.light,
+      );
+    } else {
+      cs = ColorScheme.fromSeed(
+        seedColor: _boostColor(_seedColor),
+        brightness: Brightness.light,
+      );
+    }
+
+    if (_themeSource == ThemeSource.monochrome) {
+      cs = _toGrayscale(cs);
+    }
 
     return ThemeData(
       useMaterial3: true,
       colorScheme: cs,
-      brightness: Brightness.light,
+      brightness: cs.brightness,
       scaffoldBackgroundColor: cs.background,
       appBarTheme: AppBarTheme(
         backgroundColor: cs.surface,
@@ -258,21 +277,32 @@ class ThemeProvider with ChangeNotifier {
   }
 
   ThemeData get darkTheme {
-    final cs = _isMonochrome
-        ? _monochromeDarkScheme()
-        : ColorScheme.fromSeed(
-            seedColor: _boostColor(
-              _seedColor,
-              saturationBoost: 0.06,
-              lightnessBoost: -0.04,
-            ),
-            brightness: Brightness.dark,
-          );
+    ColorScheme cs;
+
+    if (_themeSource == ThemeSource.dynamic && _dynamicDark != null) {
+      cs = ColorScheme.fromSeed(
+        seedColor: _dynamicDark!.primary,
+        brightness: Brightness.dark,
+      );
+    } else {
+      cs = ColorScheme.fromSeed(
+        seedColor: _boostColor(
+          _seedColor,
+          saturationBoost: 0.06,
+          lightnessBoost: -0.04,
+        ),
+        brightness: Brightness.dark,
+      );
+    }
+
+    if (_themeSource == ThemeSource.monochrome) {
+      cs = _toGrayscale(cs);
+    }
 
     return ThemeData(
       useMaterial3: true,
       colorScheme: cs,
-      brightness: Brightness.dark,
+      brightness: cs.brightness,
       scaffoldBackgroundColor: cs.background,
       appBarTheme: AppBarTheme(
         backgroundColor: cs.surface,
@@ -312,7 +342,7 @@ class ThemeProvider with ChangeNotifier {
           ? 'dark'
           : 'system',
       'seedColor': _seedColor.value,
-      'isMonochrome': _isMonochrome,
+      'themeSource': _themeSource.name,
       'buttonHeight': _buttonHeight,
       'buttonRadius': _buttonRadius,
       'cardRadius': _cardRadius,
@@ -335,7 +365,18 @@ class ThemeProvider with ChangeNotifier {
         _seedColor = Color(seedValue);
       }
 
-      _isMonochrome = data['isMonochrome'] as bool? ?? false;
+      final sourceName = data['themeSource'] as String?;
+      if (sourceName != null) {
+        _themeSource = ThemeSource.values.firstWhere(
+          (e) => e.name == sourceName,
+          orElse: () => ThemeSource.manual,
+        );
+      } else {
+        // Migration from isMonochrome bool
+        final isMono = data['isMonochrome'] as bool? ?? false;
+        _themeSource = isMono ? ThemeSource.monochrome : ThemeSource.manual;
+      }
+
       _buttonHeight = (data['buttonHeight'] as num?)?.toDouble() ?? 45.0;
       _buttonRadius = (data['buttonRadius'] as num?)?.toDouble() ?? 100.0;
       _cardRadius = (data['cardRadius'] as num?)?.toDouble() ?? 12.0;
@@ -350,7 +391,7 @@ class ThemeProvider with ChangeNotifier {
             : 'system',
       );
       await prefs.setInt(_prefsKeySeed, _seedColor.value);
-      await prefs.setBool(_prefsKeyMono, _isMonochrome);
+      await prefs.setString(_prefsKeySource, _themeSource.name);
       await prefs.setDouble(_prefsKeyButtonHeight, _buttonHeight);
       await prefs.setDouble(_prefsKeyButtonRadius, _buttonRadius);
       await prefs.setDouble(_prefsKeyCardRadius, _cardRadius);
@@ -365,7 +406,7 @@ class ThemeProvider with ChangeNotifier {
   Future<void> resetToDefaults() async {
     _themeMode = ThemeMode.system;
     _seedColor = Colors.blue;
-    _isMonochrome = false;
+    _themeSource = ThemeSource.manual;
     _buttonHeight = 45.0;
     _buttonRadius = 100.0;
     _cardRadius = 12.0;
@@ -374,7 +415,7 @@ class ThemeProvider with ChangeNotifier {
       final prefs = await SharedPreferences.getInstance();
       await prefs.remove(_prefsKeyMode);
       await prefs.remove(_prefsKeySeed);
-      await prefs.remove(_prefsKeyMono);
+      await prefs.remove(_prefsKeySource);
       await prefs.remove(_prefsKeyButtonHeight);
       await prefs.remove(_prefsKeyButtonRadius);
       await prefs.remove(_prefsKeyCardRadius);

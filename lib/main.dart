@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:task/provider/app_info_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:task/provider/app_info_provider.dart';
+import 'package:dynamic_color/dynamic_color.dart';
 
 import 'package:task/provider/task_provider.dart';
 import 'package:task/provider/theme_provider.dart';
@@ -30,7 +31,6 @@ class _AppRootState extends State<AppRoot> {
   }
 
   Future<void> _initApp() async {
-    // Artificial delay for splash effect if needed, but keeping it fast for performance
     try {
       final prefs = await SharedPreferences.getInstance();
       final seen = prefs.getBool('ft_seen_onboarding') ?? false;
@@ -40,7 +40,6 @@ class _AppRootState extends State<AppRoot> {
         });
       }
     } catch (_) {
-      // If error, default to showing home to avoid blocking user
       if (mounted) {
         setState(() {
           _showOnboarding = false;
@@ -51,10 +50,8 @@ class _AppRootState extends State<AppRoot> {
 
   @override
   Widget build(BuildContext context) {
-    // Show splash/loading while waiting for prefs
-    // Better performance: use a const placeholder or Splash widget
     if (_showOnboarding == null) {
-      return MaterialApp(
+      return const MaterialApp(
         debugShowCheckedModeBanner: false,
         home: Scaffold(body: Center(child: CircularProgressIndicator())),
       );
@@ -70,17 +67,30 @@ class _AppRootState extends State<AppRoot> {
         ),
         ChangeNotifierProvider(create: (_) => AppInfoProvider()..loadAppInfo()),
       ],
-      child: Consumer<ThemeProvider>(
-        builder: (context, themeProvider, child) {
-          return MaterialApp(
-            debugShowCheckedModeBanner: false,
-            title: 'tasks',
-            theme: themeProvider.lightTheme,
-            darkTheme: themeProvider.darkTheme,
-            themeMode: themeProvider.themeMode,
-            home: _showOnboarding!
-                ? const OnboardingPage()
-                : const HomeScreen(),
+      child: DynamicColorBuilder(
+        builder: (lightDynamic, darkDynamic) {
+          return Consumer<ThemeProvider>(
+            builder: (context, themeProvider, child) {
+              // Sync dynamic colors if they changed
+              // Avoid calling notifyListeners in builder using postFrameCallback if needed,
+              // but updateDynamicColors already has a guard or we can call it here if we handle it carefully.
+              // Actually, simpler: just pass them to the builder or use them directly if source is dynamic.
+              // I'll update them in the provider.
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                themeProvider.updateDynamicColors(lightDynamic, darkDynamic);
+              });
+
+              return MaterialApp(
+                debugShowCheckedModeBanner: false,
+                title: 'tasks',
+                theme: themeProvider.lightTheme,
+                darkTheme: themeProvider.darkTheme,
+                themeMode: themeProvider.themeMode,
+                home: _showOnboarding!
+                    ? const OnboardingPage()
+                    : const HomeScreen(),
+              );
+            },
           );
         },
       ),
