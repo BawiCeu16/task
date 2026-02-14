@@ -162,9 +162,6 @@ class _ManageCategoriesPageState extends State<ManageCategoriesPage> {
                 itemBuilder: (context, index) {
                   final catData = categories[index];
                   final categoryName = (catData['name'] ?? '').toString();
-                  final catIconCode =
-                      catData['icon']
-                          as int?; // Kept for backward compatibility
 
                   // Use CategoryIconsHelper to get const icon based on category name
                   final iconData = CategoryIconsHelper.getIconForCategory(

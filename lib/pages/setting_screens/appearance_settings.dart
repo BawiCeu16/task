@@ -125,17 +125,6 @@ class AppearanceSettings extends StatelessWidget {
                           }
                         }
 
-                        IconData iconFor(ThemeMode m) {
-                          switch (m) {
-                            case ThemeMode.system:
-                              return Icons.smartphone;
-                            case ThemeMode.light:
-                              return Icons.light_mode;
-                            case ThemeMode.dark:
-                              return Icons.dark_mode;
-                          }
-                        }
-
                         final chips = <Widget>[];
                         for (final mode in ThemeMode.values) {
                           chips.add(

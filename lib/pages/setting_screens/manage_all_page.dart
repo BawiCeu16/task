@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 import 'package:task/provider/task_provider.dart';
-import 'package:task/widgets/icon_mapper.dart';
 import 'package:task/pages/setting_screens/manage_tasks_page.dart';
 import 'package:task/pages/setting_screens/manage_folders_page.dart';
 import 'package:task/pages/setting_screens/manage_categories_page.dart';
@@ -16,12 +15,6 @@ class ManageAllPage extends StatefulWidget {
 }
 
 class _ManageAllPageState extends State<ManageAllPage> {
-  // 2. State variables to manage inline editing
-  String? _renamingFolder;
-  String? _renamingCategory;
-  final _renameController = TextEditingController();
-  final _renameFormKey = GlobalKey<FormState>();
-
   // existing _confirm method (unchanged, omitted for brevity)
   Future<bool?> _confirm(BuildContext c, String title, String body) {
     return showDialog<bool>(
@@ -49,73 +42,6 @@ class _ManageAllPageState extends State<ManageAllPage> {
         ],
       ),
     );
-  }
-
-  // existing _formatDateSafe method (unchanged, omitted for brevity)
-  String _formatDateSafe(String iso) {
-    try {
-      final dt = DateTime.parse(iso);
-      return DateFormat.yMMMd().add_jm().format(dt);
-    } catch (_) {
-      return '-';
-    }
-  }
-
-  // Helper to exit rename mode
-  void _exitRenameMode() {
-    setState(() {
-      _renamingFolder = null;
-      _renamingCategory = null;
-      _renameController.clear();
-    });
-  }
-
-  // Helper to start rename mode
-  void _startRenameMode(String name, bool isFolder) {
-    _exitRenameMode(); // Ensure any other renaming stops
-    setState(() {
-      _renameController.text = name;
-      if (isFolder) {
-        _renamingFolder = name;
-      } else {
-        _renamingCategory = name;
-      }
-    });
-  }
-
-  // Helper for actual renaming logic
-  void _performRename(
-    BuildContext context,
-    TaskProvider provider,
-    String oldName,
-    String newName,
-    bool isFolder,
-  ) {
-    if (newName.isEmpty || newName == oldName) {
-      _exitRenameMode();
-      return;
-    }
-
-    try {
-      if (isFolder) {
-        provider.renameFolder(oldName, newName);
-      } else {
-        provider.renameCategory(oldName, newName);
-      }
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Renamed "$oldName" to "$newName"')),
-      );
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Error renaming: $e'),
-          backgroundColor: Theme.of(context).colorScheme.error,
-        ),
-      );
-    } finally {
-      _exitRenameMode();
-    }
   }
 
   @override
