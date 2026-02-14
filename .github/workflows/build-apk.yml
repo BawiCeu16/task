@@ -74,6 +74,7 @@ jobs:
         run: |
           flutter build apk \
             --release \
+            --no-tree-shake-icons \
             --build-number=${{ github.run_number }} \
             --build-name=${{ steps.version.outputs.version }}
 
