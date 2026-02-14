@@ -33,18 +33,22 @@ android {
     signingConfigs {
         create("release") {
             val keyFile = file("task.keystore")
-            if (keyFile.exists()) {
+            val hasKeystore = keyFile.exists()
+            val hasEnvVars = System.getenv("KEYSTORE_PASSWORD") != null
+            
+            if (hasKeystore && hasEnvVars) {
+                // Production keystore found, use it
                 storeFile = keyFile
                 storePassword = System.getenv("KEYSTORE_PASSWORD")
                 keyAlias = System.getenv("KEY_ALIAS")
                 keyPassword = System.getenv("KEY_PASSWORD")
             } else {
-                // Fallback to debug keystore for development
-                // This is not secure and should only be used for testing
-                storeFile = signingConfigs.getByName("debug").storeFile
-                storePassword = signingConfigs.getByName("debug").storePassword
-                keyAlias = signingConfigs.getByName("debug").keyAlias
-                keyPassword = signingConfigs.getByName("debug").keyPassword
+                // Development/CI: Use debug keystore
+                // This is safe for CI builds and development
+                storeFile = file("${System.getProperty("user.home")}/.android/debug.keystore")
+                storePassword = "android"
+                keyAlias = "androiddebugkey"
+                keyPassword = "android"
             }
         }
     }
