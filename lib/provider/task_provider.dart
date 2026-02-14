@@ -310,7 +310,7 @@ class TaskProvider with ChangeNotifier {
       list = list.where((t) => !(t['isDone'] ?? false)).toList();
     }
 
-    int _parseDateCompareDesc(Map<String, dynamic> a, Map<String, dynamic> b) {
+    int parseDateCompareDesc(Map<String, dynamic> a, Map<String, dynamic> b) {
       DateTime? da;
       DateTime? db;
       try {
@@ -329,48 +329,48 @@ class TaskProvider with ChangeNotifier {
       return db.compareTo(da); // newest first
     }
 
-    int _alphaAsc(Map<String, dynamic> a, Map<String, dynamic> b) {
+    int alphaAsc(Map<String, dynamic> a, Map<String, dynamic> b) {
       final sa = ((a['task'] ?? '') as String).toLowerCase();
       final sb = ((b['task'] ?? '') as String).toLowerCase();
       return sa.compareTo(sb);
     }
 
-    int _completedFirst(Map<String, dynamic> a, Map<String, dynamic> b) {
+    int completedFirst(Map<String, dynamic> a, Map<String, dynamic> b) {
       final da = (a['isDone'] ?? false) as bool;
       final db = (b['isDone'] ?? false) as bool;
-      if (da == db) return _parseDateCompareDesc(a, b);
+      if (da == db) return parseDateCompareDesc(a, b);
       return da ? -1 : 1; // completed true first
     }
 
-    int _incompleteFirst(Map<String, dynamic> a, Map<String, dynamic> b) {
+    int incompleteFirst(Map<String, dynamic> a, Map<String, dynamic> b) {
       final da = (a['isDone'] ?? false) as bool;
       final db = (b['isDone'] ?? false) as bool;
-      if (da == db) return _parseDateCompareDesc(a, b);
+      if (da == db) return parseDateCompareDesc(a, b);
       return da ? 1 : -1; // incomplete (false) first
     }
 
-    int _color(Map<String, dynamic> a, Map<String, dynamic> b) {
+    int colorSort(Map<String, dynamic> a, Map<String, dynamic> b) {
       final ca = (a['color'] ?? 0) as int;
       final cb = (b['color'] ?? 0) as int;
-      if (ca == cb) return _parseDateCompareDesc(a, b);
+      if (ca == cb) return parseDateCompareDesc(a, b);
       return cb.compareTo(
         ca,
       ); // color desc (assuming higher value is more important/distinct)
     }
 
-    int _folder(Map<String, dynamic> a, Map<String, dynamic> b) {
+    int folderSort(Map<String, dynamic> a, Map<String, dynamic> b) {
       final fa = ((a['folder'] ?? '') as String).toLowerCase();
       final fb = ((b['folder'] ?? '') as String).toLowerCase();
-      if (fa == fb) return _parseDateCompareDesc(a, b);
+      if (fa == fb) return parseDateCompareDesc(a, b);
       if (fa.isEmpty) return 1; // no folder last
       if (fb.isEmpty) return -1;
       return fa.compareTo(fb);
     }
 
-    int _category(Map<String, dynamic> a, Map<String, dynamic> b) {
+    int categorySort(Map<String, dynamic> a, Map<String, dynamic> b) {
       final ca = ((a['category'] ?? '') as String).toLowerCase();
       final cb = ((b['category'] ?? '') as String).toLowerCase();
-      if (ca == cb) return _parseDateCompareDesc(a, b);
+      if (ca == cb) return parseDateCompareDesc(a, b);
       if (ca.isEmpty) return 1; // no category last
       if (cb.isEmpty) return -1;
       return ca.compareTo(cb);
@@ -378,31 +378,31 @@ class TaskProvider with ChangeNotifier {
 
     switch (_sortOption) {
       case SortOption.newestFirst:
-        list.sort(_parseDateCompareDesc);
+        list.sort(parseDateCompareDesc);
         break;
       case SortOption.oldestFirst:
-        list.sort((a, b) => -_parseDateCompareDesc(a, b));
+        list.sort((a, b) => -parseDateCompareDesc(a, b));
         break;
       case SortOption.alphaAsc:
-        list.sort(_alphaAsc);
+        list.sort(alphaAsc);
         break;
       case SortOption.alphaDesc:
-        list.sort((a, b) => _alphaAsc(b, a));
+        list.sort((a, b) => alphaAsc(b, a));
         break;
       case SortOption.completedFirst:
-        list.sort(_completedFirst);
+        list.sort(completedFirst);
         break;
       case SortOption.incompleteFirst:
-        list.sort(_incompleteFirst);
+        list.sort(incompleteFirst);
         break;
       case SortOption.color:
-        list.sort(_color);
+        list.sort(colorSort);
         break;
       case SortOption.folder:
-        list.sort(_folder);
+        list.sort(folderSort);
         break;
       case SortOption.category:
-        list.sort(_category);
+        list.sort(categorySort);
         break;
     }
 
