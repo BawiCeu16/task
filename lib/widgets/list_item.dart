@@ -44,7 +44,9 @@ class MyListItem extends StatelessWidget {
                   ? TextDecoration.lineThrough
                   : TextDecoration.none,
               color: isDone
-                  ? Theme.of(context).colorScheme.onSurface.withOpacity(0.6)
+                  ? Theme.of(
+                      context,
+                    ).colorScheme.onSurface.withValues(alpha: 0.6)
                   : null,
             ),
           ),

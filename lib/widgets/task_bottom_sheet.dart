@@ -218,7 +218,9 @@ class TaskBottomSheet extends StatelessWidget {
                         false;
                   }
 
-                  Navigator.pop(context); // Pop bottom sheet
+                  if (context.mounted) {
+                    Navigator.pop(context); // Pop bottom sheet
+                  }
                   if (confirm) {
                     provider.deleteTask(realIndex);
                   }

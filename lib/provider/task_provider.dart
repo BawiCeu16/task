@@ -481,12 +481,18 @@ class TaskProvider with ChangeNotifier {
   }) {
     if (index < 0 || index >= _tasks.length) return;
     _tasks[index]['task'] = newText;
-    if (isDone != null) _tasks[index]['isDone'] = isDone;
-    if (folder != null)
+    if (isDone != null) {
+      _tasks[index]['isDone'] = isDone;
+    }
+    if (folder != null) {
       _tasks[index]['folder'] = folder.isEmpty ? null : folder;
-    if (category != null)
+    }
+    if (category != null) {
       _tasks[index]['category'] = category.isEmpty ? null : category;
-    if (color != null) _tasks[index]['color'] = color;
+    }
+    if (color != null) {
+      _tasks[index]['color'] = color;
+    }
     _tasks[index]['editDate'] = DateTime.now().toIso8601String();
     _saveAll();
     notifyListeners();

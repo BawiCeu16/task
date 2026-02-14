@@ -30,7 +30,7 @@ class TaskListView extends StatelessWidget {
     final complete = tasks.where((t) => (t['isDone'] ?? false) as bool).length;
     final incomplete = total - complete;
 
-    final builder = (context, index) {
+    Widget builder(context, index) {
       if (showChart && index == 0) {
         return TaskSummaryChart(
           total: total,
@@ -76,7 +76,7 @@ class TaskListView extends StatelessWidget {
           },
         ),
       );
-    };
+    }
 
     final count = showChart ? tasks.length + 1 : tasks.length;
 

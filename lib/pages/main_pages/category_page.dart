@@ -5,7 +5,6 @@ import 'package:task/widgets/category_list_item.dart';
 import 'package:task/widgets/create_category_dialog.dart';
 import 'package:task/widgets/icon_mapper.dart';
 import 'package:task/utils/category_icons_helper.dart';
-import 'package:task/pages/main_pages/category_detail_page.dart';
 
 class CategoryPage extends StatelessWidget {
   const CategoryPage({super.key});

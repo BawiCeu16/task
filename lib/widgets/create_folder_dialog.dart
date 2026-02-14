@@ -150,13 +150,14 @@ class _CreateFolderDialogState extends State<CreateFolderDialog> {
         FilledButton(
           onPressed: () {
             final name = _c.text.trim();
-            if (name.isNotEmpty)
+            if (name.isNotEmpty) {
               Provider.of<TaskProvider>(context, listen: false).createFolder(
                 name,
                 icon: _selectedIcon,
                 image: _selectedImage,
                 color: _selectedColor,
               );
+            }
             Navigator.pop(context);
           },
           child: const Text('Create'),

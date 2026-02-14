@@ -21,7 +21,9 @@ class TaskSummaryChart extends StatelessWidget {
       elevation: 0,
       margin: const EdgeInsets.all(10), // Adjust margin to fit list style
       // specific color or default card color
-      color: Theme.of(context).colorScheme.secondaryContainer.withOpacity(0.4),
+      color: Theme.of(
+        context,
+      ).colorScheme.secondaryContainer.withValues(alpha: 0.4),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: InkWell(
         onTap: () {
@@ -106,7 +108,7 @@ class TaskSummaryChart extends StatelessWidget {
                 size: 16,
                 color: Theme.of(
                   context,
-                ).colorScheme.onSurfaceVariant.withOpacity(0.5),
+                ).colorScheme.onSurfaceVariant.withValues(alpha: 0.5),
               ),
             ],
           ),
