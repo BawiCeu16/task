@@ -60,19 +60,14 @@ jobs:
           KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
         run: |
           if [ -n "$KEYSTORE_FILE" ]; then
-            # Decode and create keystore
+            # Decode and create keystore in android/app directory
             echo "$KEYSTORE_FILE" | base64 -d > android/app/task.keystore
-            
-            # Create signing properties file
-            cat > android/key.properties << EOF
-          storeFile=task.keystore
-          storePassword=$KEYSTORE_PASSWORD
-          keyAlias=$KEY_ALIAS
-          keyPassword=$KEY_PASSWORD
-          EOF
-            echo "Keystore configured for signing"
+            echo "KEYSTORE_PASSWORD=$KEYSTORE_PASSWORD" >> $GITHUB_ENV
+            echo "KEY_ALIAS=$KEY_ALIAS" >> $GITHUB_ENV
+            echo "KEY_PASSWORD=$KEY_PASSWORD" >> $GITHUB_ENV
+            echo "✓ Keystore configured for production signing"
           else
-            echo "No keystore secrets found, using debug keystore"
+            echo "⚠ No keystore secrets found, using debug keystore"
           fi
 
       - name: Build Release APK
