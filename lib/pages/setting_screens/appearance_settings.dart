@@ -148,10 +148,10 @@ class Appearance_Settings extends StatelessWidget {
                                   horizontal: 12,
                                   vertical: 6,
                                 ),
-                                avatar: Icon(
-                                  remixIcon(iconFor(mode)),
-                                  size: 18,
-                                ),
+                                // avatar: Icon(
+                                //   remixIcon(iconFor(mode)),
+                                //   size: 18,
+                                // ),
                                 label: Text(labelFor(mode)),
                                 selected: currentMode == mode,
                                 onSelected: (selected) {

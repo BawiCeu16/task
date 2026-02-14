@@ -158,424 +158,434 @@ class _ManageAllPageState extends State<ManageAllPage> {
         centerTitle: true,
         scrolledUnderElevation: 0,
       ),
-      body: ListView(
-        padding: const EdgeInsets.all(12),
-        physics: BouncingScrollPhysics(),
-        children: [
-          // --- Summary cards row --- (unchanged)
-          Card(
-            elevation: 0,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
+      body: SafeArea(
+        child: ListView(
+          padding: const EdgeInsets.all(12),
+          physics: BouncingScrollPhysics(),
+          children: [
+            // --- Summary cards row --- (unchanged)
+            Card(
+              elevation: 0,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: Column(
+                  children: [
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        'Summary',
+                        style: Theme.of(context).textTheme.titleMedium,
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    Wrap(
+                      spacing: 12,
+                      runSpacing: 12,
+                      children: [
+                        _StatCard(
+                          label: 'Tasks',
+                          value: totalTasks.toString(),
+                          subtitle: 'Total',
+                          width: 160,
+                          onTap: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) =>
+                                  const ManageTasksPage(title: 'All Tasks'),
+                            ),
+                          ),
+                        ),
+                        _StatCard(
+                          label: 'Folders',
+                          value: totalFolders.toString(),
+                          subtitle: 'Total',
+                          width: 160,
+                          onTap: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => const ManageFoldersPage(),
+                            ),
+                          ),
+                        ),
+                        _StatCard(
+                          label: 'Categories',
+                          value: totalCategories.toString(),
+                          subtitle: 'Total',
+                          width: 160,
+                          onTap: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => const ManageCategoriesPage(),
+                            ),
+                          ),
+                        ),
+                        _StatCard(
+                          label: 'Completed',
+                          value: completed.toString(),
+                          subtitle: 'Done',
+                          width: 160,
+                          onTap: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => const ManageTasksPage(
+                                title: 'Completed Tasks',
+                                filter: 'completed',
+                              ),
+                            ),
+                          ),
+                        ),
+                        _StatCard(
+                          label: 'Incomplete',
+                          value: incomplete.toString(),
+                          subtitle: 'Pending',
+                          width: 160,
+                          onTap: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => const ManageTasksPage(
+                                title: 'Pending Tasks',
+                                filter: 'incomplete',
+                              ),
+                            ),
+                          ),
+                        ),
+                        _StatCard(
+                          label: 'No Folder',
+                          value: withoutFolder.toString(),
+                          subtitle: 'Unsorted',
+                          width: 160,
+                          onTap: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => const ManageTasksPage(
+                                title: 'Unsorted Tasks',
+                                filter: 'no_folder',
+                              ),
+                            ),
+                          ),
+                        ),
+                        _StatCard(
+                          label: 'No Category',
+                          value: withoutCategory.toString(),
+                          subtitle: 'Uncategorized',
+                          width: 160,
+                          onTap: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => const ManageTasksPage(
+                                title: 'Uncategorized Tasks',
+                                filter: 'no_category',
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 10),
+                    Row(
+                      children: [
+                        Expanded(child: Text('Oldest: $oldestStr')),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Text(
+                            'Newest: $newestStr',
+                            textAlign: TextAlign.right,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
             ),
-            child: Padding(
-              padding: const EdgeInsets.all(12.0),
-              child: Column(
-                children: [
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      'Summary',
+
+            const SizedBox(height: 12),
+
+            // --- quick actions ---
+            Card(
+              elevation: 0,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Quick actions",
                       style: Theme.of(context).textTheme.titleMedium,
                     ),
-                  ),
-                  const SizedBox(height: 10),
-                  Wrap(
-                    spacing: 12,
-                    runSpacing: 12,
-                    children: [
-                      _StatCard(
-                        label: 'Tasks',
-                        value: totalTasks.toString(),
-                        subtitle: 'Total',
-                        width: 160,
-                        onTap: () => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) =>
-                                const ManageTasksPage(title: 'All Tasks'),
-                          ),
-                        ),
-                      ),
-                      _StatCard(
-                        label: 'Folders',
-                        value: totalFolders.toString(),
-                        subtitle: 'Total',
-                        width: 160,
-                        onTap: () => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => const ManageFoldersPage(),
-                          ),
-                        ),
-                      ),
-                      _StatCard(
-                        label: 'Categories',
-                        value: totalCategories.toString(),
-                        subtitle: 'Total',
-                        width: 160,
-                        onTap: () => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => const ManageCategoriesPage(),
-                          ),
-                        ),
-                      ),
-                      _StatCard(
-                        label: 'Completed',
-                        value: completed.toString(),
-                        subtitle: 'Done',
-                        width: 160,
-                        onTap: () => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => const ManageTasksPage(
-                              title: 'Completed Tasks',
-                              filter: 'completed',
-                            ),
-                          ),
-                        ),
-                      ),
-                      _StatCard(
-                        label: 'Incomplete',
-                        value: incomplete.toString(),
-                        subtitle: 'Pending',
-                        width: 160,
-                        onTap: () => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => const ManageTasksPage(
-                              title: 'Pending Tasks',
-                              filter: 'incomplete',
-                            ),
-                          ),
-                        ),
-                      ),
-                      _StatCard(
-                        label: 'No Folder',
-                        value: withoutFolder.toString(),
-                        subtitle: 'Unsorted',
-                        width: 160,
-                        onTap: () => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => const ManageTasksPage(
-                              title: 'Unsorted Tasks',
-                              filter: 'no_folder',
-                            ),
-                          ),
-                        ),
-                      ),
-                      _StatCard(
-                        label: 'No Category',
-                        value: withoutCategory.toString(),
-                        subtitle: 'Uncategorized',
-                        width: 160,
-                        onTap: () => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => const ManageTasksPage(
-                              title: 'Uncategorized Tasks',
-                              filter: 'no_category',
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 10),
-                  Row(
-                    children: [
-                      Expanded(child: Text('Oldest: $oldestStr')),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: Text(
-                          'Newest: $newestStr',
-                          textAlign: TextAlign.right,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ),
-
-          const SizedBox(height: 12),
-
-          // --- quick actions ---
-          Card(
-            elevation: 0,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(12.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    "Quick actions",
-                    style: Theme.of(context).textTheme.titleMedium,
-                  ),
-                  SizedBox(height: 5.0),
-                  Wrap(
-                    spacing: 8,
-                    runSpacing: 8,
-                    children: [
-                      // Delete all folders button
-                      FilledButton.tonal(
-                        onPressed: () async {
-                          final confirm = await _confirm(
-                            context,
-                            'Delete all folders',
-                            'Delete all folders. This can also remove tasks inside them.',
-                          );
-                          if (confirm == true) {
-                            final deleteTasks = await showDialog<bool>(
-                              context: context,
-                              builder: (ctx) => SimpleDialog(
-                                title: const Text('Also delete folder tasks?'),
-                                children: [
-                                  SimpleDialogOption(
-                                    onPressed: () => Navigator.pop(ctx, false),
-                                    child: const Text(
-                                      'Keep tasks (unset folder)',
-                                    ),
+                    SizedBox(height: 5.0),
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: [
+                        // Delete all folders button
+                        FilledButton.tonal(
+                          onPressed: () async {
+                            final confirm = await _confirm(
+                              context,
+                              'Delete all folders',
+                              'Delete all folders. This can also remove tasks inside them.',
+                            );
+                            if (confirm == true) {
+                              final deleteTasks = await showDialog<bool>(
+                                context: context,
+                                builder: (ctx) => SimpleDialog(
+                                  title: const Text(
+                                    'Also delete folder tasks?',
                                   ),
-                                  SimpleDialogOption(
+                                  children: [
+                                    SimpleDialogOption(
+                                      onPressed: () =>
+                                          Navigator.pop(ctx, false),
+                                      child: const Text(
+                                        'Keep tasks (unset folder)',
+                                      ),
+                                    ),
+                                    SimpleDialogOption(
+                                      onPressed: () => Navigator.pop(ctx, true),
+                                      child: const Text('Delete tasks too'),
+                                    ),
+                                  ],
+                                ),
+                              );
+
+                              // Handle dialog dismissal
+                              if (deleteTasks == null) return;
+
+                              try {
+                                provider.deleteAllFolders(
+                                  deleteTasks: deleteTasks,
+                                );
+                                if (mounted) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text('All folders cleared'),
+                                    ),
+                                  );
+                                }
+                              } catch (e) {
+                                if (mounted) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text('Error: $e'),
+                                      backgroundColor: Theme.of(
+                                        context,
+                                      ).colorScheme.error,
+                                    ),
+                                  );
+                                }
+                              }
+                            }
+                          },
+                          child: const Text('Delete all folders'),
+                        ),
+
+                        // Clear folder tags button
+                        FilledButton.tonal(
+                          onPressed: () async {
+                            final confirm = await _confirm(
+                              context,
+                              'Clear folder tags',
+                              'Unset folder tag from all tasks (keeps the tasks).',
+                            );
+                            if (confirm == true) {
+                              try {
+                                provider.deleteAllFolders(deleteTasks: false);
+                                if (mounted) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text('Folder tags cleared'),
+                                    ),
+                                  );
+                                }
+                              } catch (e) {
+                                if (mounted) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text('Error: $e'),
+                                      backgroundColor: Theme.of(
+                                        context,
+                                      ).colorScheme.error,
+                                    ),
+                                  );
+                                }
+                              }
+                            }
+                          },
+                          child: const Text('Clear folder tags'),
+                        ),
+                        // Delete all categories button
+                        FilledButton.tonal(
+                          onPressed: () async {
+                            final confirm = await _confirm(
+                              context,
+                              'Delete all categories',
+                              'Delete all categories. Optionally remove tasks in those categories.',
+                            );
+                            if (confirm == true) {
+                              final deleteTasks = await showDialog<bool>(
+                                context: context,
+                                builder: (ctx) => SimpleDialog(
+                                  title: const Text(
+                                    'Also delete category tasks?',
+                                  ),
+                                  children: [
+                                    SimpleDialogOption(
+                                      onPressed: () =>
+                                          Navigator.pop(ctx, false),
+                                      child: const Text(
+                                        'Keep tasks (unset category)',
+                                      ),
+                                    ),
+                                    SimpleDialogOption(
+                                      onPressed: () => Navigator.pop(ctx, true),
+                                      child: const Text('Delete tasks too'),
+                                    ),
+                                  ],
+                                ),
+                              );
+
+                              // Handle dialog dismissal
+                              if (deleteTasks == null) return;
+
+                              try {
+                                provider.deleteAllCategories(
+                                  deleteTasks: deleteTasks,
+                                );
+                                if (mounted) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text('All categories cleared'),
+                                    ),
+                                  );
+                                }
+                              } catch (e) {
+                                if (mounted) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text('Error: $e'),
+                                      backgroundColor: Theme.of(
+                                        context,
+                                      ).colorScheme.error,
+                                    ),
+                                  );
+                                }
+                              }
+                            }
+                          },
+                          child: const Text('Delete all categories'),
+                        ),
+                        // Clear category tags button
+                        FilledButton.tonal(
+                          onPressed: () async {
+                            final confirm = await _confirm(
+                              context,
+                              'Clear category tags',
+                              'Unset category tag from all tasks (keeps the tasks).',
+                            );
+                            if (confirm == true) {
+                              try {
+                                provider.deleteAllCategories(
+                                  deleteTasks: false,
+                                );
+                                if (mounted) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text('Category tags cleared'),
+                                    ),
+                                  );
+                                }
+                              } catch (e) {
+                                if (mounted) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text('Error: $e'),
+                                      backgroundColor: Theme.of(
+                                        context,
+                                      ).colorScheme.error,
+                                    ),
+                                  );
+                                }
+                              }
+                            }
+                          },
+                          child: const Text('Clear all tasks'),
+                        ),
+
+                        // Delete all tasks button
+                        FilledButton(
+                          style: FilledButton.styleFrom(
+                            backgroundColor: Theme.of(
+                              context,
+                            ).colorScheme.error,
+                          ),
+                          onPressed: () async {
+                            final confirmed = await showDialog<bool>(
+                              context: context,
+                              builder: (ctx) => AlertDialog(
+                                title: const Text('Clear all tasks?'),
+                                content: const Text(
+                                  'This will permanently delete all tasks. This action cannot be undone.',
+                                ),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () => Navigator.pop(ctx, false),
+                                    child: const Text('Cancel'),
+                                  ),
+                                  FilledButton(
+                                    style: FilledButton.styleFrom(
+                                      backgroundColor: Theme.of(
+                                        context,
+                                      ).colorScheme.error,
+                                    ),
                                     onPressed: () => Navigator.pop(ctx, true),
-                                    child: const Text('Delete tasks too'),
+                                    child: const Text('Clear All'),
                                   ),
                                 ],
                               ),
                             );
-
-                            // Handle dialog dismissal
-                            if (deleteTasks == null) return;
-
-                            try {
-                              provider.deleteAllFolders(
-                                deleteTasks: deleteTasks,
-                              );
-                              if (mounted) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text('All folders cleared'),
-                                  ),
-                                );
-                              }
-                            } catch (e) {
-                              if (mounted) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text('Error: $e'),
-                                    backgroundColor: Theme.of(
-                                      context,
-                                    ).colorScheme.error,
-                                  ),
-                                );
-                              }
-                            }
-                          }
-                        },
-                        child: const Text('Delete all folders'),
-                      ),
-
-                      // Clear folder tags button
-                      FilledButton.tonal(
-                        onPressed: () async {
-                          final confirm = await _confirm(
-                            context,
-                            'Clear folder tags',
-                            'Unset folder tag from all tasks (keeps the tasks).',
-                          );
-                          if (confirm == true) {
-                            try {
-                              provider.deleteAllFolders(deleteTasks: false);
-                              if (mounted) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text('Folder tags cleared'),
-                                  ),
-                                );
-                              }
-                            } catch (e) {
-                              if (mounted) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text('Error: $e'),
-                                    backgroundColor: Theme.of(
-                                      context,
-                                    ).colorScheme.error,
-                                  ),
-                                );
-                              }
-                            }
-                          }
-                        },
-                        child: const Text('Clear folder tags'),
-                      ),
-                      // Delete all categories button
-                      FilledButton.tonal(
-                        onPressed: () async {
-                          final confirm = await _confirm(
-                            context,
-                            'Delete all categories',
-                            'Delete all categories. Optionally remove tasks in those categories.',
-                          );
-                          if (confirm == true) {
-                            final deleteTasks = await showDialog<bool>(
-                              context: context,
-                              builder: (ctx) => SimpleDialog(
-                                title: const Text(
-                                  'Also delete category tasks?',
-                                ),
-                                children: [
-                                  SimpleDialogOption(
-                                    onPressed: () => Navigator.pop(ctx, false),
-                                    child: const Text(
-                                      'Keep tasks (unset category)',
+                            if (confirmed == true) {
+                              try {
+                                await context
+                                    .read<TaskProvider>()
+                                    .deleteAllTasks();
+                                if (mounted) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text('All tasks cleared'),
                                     ),
-                                  ),
-                                  SimpleDialogOption(
-                                    onPressed: () => Navigator.pop(ctx, true),
-                                    child: const Text('Delete tasks too'),
-                                  ),
-                                ],
-                              ),
-                            );
-
-                            // Handle dialog dismissal
-                            if (deleteTasks == null) return;
-
-                            try {
-                              provider.deleteAllCategories(
-                                deleteTasks: deleteTasks,
-                              );
-                              if (mounted) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text('All categories cleared'),
-                                  ),
-                                );
-                              }
-                            } catch (e) {
-                              if (mounted) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text('Error: $e'),
-                                    backgroundColor: Theme.of(
-                                      context,
-                                    ).colorScheme.error,
-                                  ),
-                                );
+                                  );
+                                }
+                              } catch (e) {
+                                if (mounted) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text('Error: $e'),
+                                      backgroundColor: Theme.of(
+                                        context,
+                                      ).colorScheme.error,
+                                    ),
+                                  );
+                                }
                               }
                             }
-                          }
-                        },
-                        child: const Text('Delete all categories'),
-                      ),
-                      // Clear category tags button
-                      FilledButton.tonal(
-                        onPressed: () async {
-                          final confirm = await _confirm(
-                            context,
-                            'Clear category tags',
-                            'Unset category tag from all tasks (keeps the tasks).',
-                          );
-                          if (confirm == true) {
-                            try {
-                              provider.deleteAllCategories(deleteTasks: false);
-                              if (mounted) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text('Category tags cleared'),
-                                  ),
-                                );
-                              }
-                            } catch (e) {
-                              if (mounted) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text('Error: $e'),
-                                    backgroundColor: Theme.of(
-                                      context,
-                                    ).colorScheme.error,
-                                  ),
-                                );
-                              }
-                            }
-                          }
-                        },
-                        child: const Text('Clear all tasks'),
-                      ),
-
-                      // Delete all tasks button
-                      FilledButton(
-                        style: FilledButton.styleFrom(
-                          backgroundColor: Theme.of(context).colorScheme.error,
+                          },
+                          child: const Text('Clear all tasks'),
                         ),
-                        onPressed: () async {
-                          final confirmed = await showDialog<bool>(
-                            context: context,
-                            builder: (ctx) => AlertDialog(
-                              title: const Text('Clear all tasks?'),
-                              content: const Text(
-                                'This will permanently delete all tasks. This action cannot be undone.',
-                              ),
-                              actions: [
-                                TextButton(
-                                  onPressed: () => Navigator.pop(ctx, false),
-                                  child: const Text('Cancel'),
-                                ),
-                                FilledButton(
-                                  style: FilledButton.styleFrom(
-                                    backgroundColor: Theme.of(
-                                      context,
-                                    ).colorScheme.error,
-                                  ),
-                                  onPressed: () => Navigator.pop(ctx, true),
-                                  child: const Text('Clear All'),
-                                ),
-                              ],
-                            ),
-                          );
-                          if (confirmed == true) {
-                            try {
-                              await context
-                                  .read<TaskProvider>()
-                                  .deleteAllTasks();
-                              if (mounted) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text('All tasks cleared'),
-                                  ),
-                                );
-                              }
-                            } catch (e) {
-                              if (mounted) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text('Error: $e'),
-                                    backgroundColor: Theme.of(
-                                      context,
-                                    ).colorScheme.error,
-                                  ),
-                                );
-                              }
-                            }
-                          }
-                        },
-                        child: const Text('Clear all tasks'),
-                      ),
-                    ],
-                  ),
-                ],
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

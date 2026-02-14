@@ -46,6 +46,7 @@ dependencies:
   flutter_distributor: ^0.6.6
   remixicon: ^1.4.1
   dynamic_color: ^1.8.1
+  http: ^1.6.0
 
 dev_dependencies:
   flutter_test:

@@ -126,7 +126,15 @@ class AboutPage extends StatelessWidget {
                           _buildContributorTile(
                             'BawiCeu',
                             'https://bawiceu16.github.io/bawiceu.dev/',
-                            Icon(remixIcon(Icons.person)),
+                            CircleAvatar(
+                              radius: 20,
+                              backgroundImage: NetworkImage(
+                                'https://github.com/BawiCeu16.png',
+                              ),
+                              backgroundColor: Theme.of(
+                                context,
+                              ).colorScheme.surfaceContainerHighest,
+                            ),
                           ),
                           const SizedBox(height: 5.0),
 

@@ -112,13 +112,16 @@ class FolderPage extends StatelessWidget {
                                 fit: BoxFit.cover,
                               ),
                             )
-                          else if (iconCode != null)
-                            Icon(
-                              IconData(iconCode, fontFamily: 'MaterialIcons'),
-                              size: 44,
-                            )
                           else
-                            const Icon(Icons.folder, size: 44),
+                            Icon(
+                              iconCode != null
+                                  ? IconData(
+                                      iconCode,
+                                      fontFamily: 'MaterialIcons',
+                                    )
+                                  : Icons.folder,
+                              size: 44,
+                            ),
                           const SizedBox(height: 8),
                           Text(
                             folderName,

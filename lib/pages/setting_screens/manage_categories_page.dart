@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:task/provider/task_provider.dart';
 import 'package:task/widgets/icon_mapper.dart';
+import 'package:task/utils/category_icons_helper.dart';
 
 class ManageCategoriesPage extends StatefulWidget {
   const ManageCategoriesPage({super.key});
@@ -35,7 +36,10 @@ class _ManageCategoriesPageState extends State<ManageCategoriesPage> {
       return;
     }
     try {
-      provider.renameCategory(oldName, newName);
+      // Auto-update icon on rename
+      final newIcon = CategoryIconsHelper.getIconForCategory(newName);
+      provider.renameCategory(oldName, newName, icon: newIcon.codePoint);
+
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Renamed "$oldName" to "$newName"')),
@@ -83,7 +87,8 @@ class _ManageCategoriesPageState extends State<ManageCategoriesPage> {
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<TaskProvider>(context);
-    final categories = provider.categories;
+    // Use categoryList to get access to icon data
+    final categories = provider.categoryList;
 
     return Scaffold(
       appBar: AppBar(
@@ -150,99 +155,121 @@ class _ManageCategoriesPageState extends State<ManageCategoriesPage> {
                 ),
               ),
             )
-          : ListView.builder(
-              padding: const EdgeInsets.all(12),
-              itemCount: categories.length,
-              itemBuilder: (context, index) {
-                final category = categories[index];
-                final isRenaming = _renamingCategory == category;
-                final count = provider.tasksInCategory(category).length;
+          : SafeArea(
+              child: ListView.builder(
+                padding: const EdgeInsets.all(12),
+                itemCount: categories.length,
+                itemBuilder: (context, index) {
+                  final catData = categories[index];
+                  final categoryName = (catData['name'] ?? '').toString();
+                  final catIconCode =
+                      catData['icon']
+                          as int?; // Kept for backward compatibility
 
-                return Card(
-                  elevation: 0,
-                  margin: const EdgeInsets.only(bottom: 8),
-                  child: isRenaming
-                      ? Form(
-                          key: _renameFormKey,
-                          child: ListTile(
-                            title: TextFormField(
-                              controller: _renameController,
-                              autofocus: true,
-                              decoration: const InputDecoration(
-                                isDense: true,
-                                border: InputBorder.none,
-                              ),
-                              onFieldSubmitted: (v) =>
-                                  _performRename(provider, category, v.trim()),
-                              validator: (v) => (v == null || v.trim().isEmpty)
-                                  ? 'Cannot be empty'
-                                  : null,
-                            ),
-                            trailing: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                IconButton(
-                                  icon: Icon(remixIcon(Icons.check)),
-                                  onPressed: () {
-                                    if (_renameFormKey.currentState!
-                                        .validate()) {
-                                      _performRename(
-                                        provider,
-                                        category,
-                                        _renameController.text.trim(),
-                                      );
-                                    }
-                                  },
+                  // Use CategoryIconsHelper to get const icon based on category name
+                  final iconData = CategoryIconsHelper.getIconForCategory(
+                    categoryName,
+                  );
+
+                  final isRenaming = _renamingCategory == categoryName;
+                  final count = provider.tasksInCategory(categoryName).length;
+
+                  return Card(
+                    elevation: 0,
+                    margin: const EdgeInsets.only(bottom: 8),
+                    child: isRenaming
+                        ? Form(
+                            key: _renameFormKey,
+                            child: ListTile(
+                              title: TextFormField(
+                                controller: _renameController,
+                                autofocus: true,
+                                decoration: const InputDecoration(
+                                  isDense: true,
+                                  border: InputBorder.none,
                                 ),
-                                IconButton(
-                                  icon: Icon(remixIcon(Icons.close)),
-                                  onPressed: _exitRenameMode,
+                                onFieldSubmitted: (v) => _performRename(
+                                  provider,
+                                  categoryName,
+                                  v.trim(),
+                                ),
+                                validator: (v) =>
+                                    (v == null || v.trim().isEmpty)
+                                    ? 'Cannot be empty'
+                                    : null,
+                              ),
+                              trailing: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  IconButton(
+                                    icon: Icon(remixIcon(Icons.check)),
+                                    onPressed: () {
+                                      if (_renameFormKey.currentState!
+                                          .validate()) {
+                                        _performRename(
+                                          provider,
+                                          categoryName,
+                                          _renameController.text.trim(),
+                                        );
+                                      }
+                                    },
+                                  ),
+                                  IconButton(
+                                    icon: Icon(remixIcon(Icons.close)),
+                                    onPressed: _exitRenameMode,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          )
+                        : ListTile(
+                            leading: Icon(
+                              iconData,
+                              color: Theme.of(context).colorScheme.primary,
+                            ),
+                            title: Text(categoryName),
+                            subtitle: Text(
+                              '$count task${count == 1 ? '' : 's'}',
+                            ),
+                            trailing: PopupMenuButton<String>(
+                              onSelected: (v) async {
+                                if (v == 'rename') {
+                                  _startRenameMode(categoryName);
+                                } else if (v == 'delete') {
+                                  final ok = await _confirm(
+                                    'Delete Category',
+                                    'Delete "$categoryName" and unset it from tasks?',
+                                  );
+                                  if (ok == true) {
+                                    try {
+                                      provider.deleteCategory(categoryName);
+                                    } catch (e) {
+                                      if (mounted) {
+                                        ScaffoldMessenger.of(
+                                          context,
+                                        ).showSnackBar(
+                                          SnackBar(content: Text('Error: $e')),
+                                        );
+                                      }
+                                    }
+                                  }
+                                }
+                              },
+                              itemBuilder: (_) => [
+                                const PopupMenuItem(
+                                  value: 'rename',
+                                  child: Text('Rename'),
+                                ),
+                                const PopupMenuItem(
+                                  value: 'delete',
+                                  child: Text('Delete'),
                                 ),
                               ],
                             ),
                           ),
-                        )
-                      : ListTile(
-                          title: Text(category),
-                          subtitle: Text('$count task${count == 1 ? '' : 's'}'),
-                          trailing: PopupMenuButton<String>(
-                            onSelected: (v) async {
-                              if (v == 'rename') {
-                                _startRenameMode(category);
-                              } else if (v == 'delete') {
-                                final ok = await _confirm(
-                                  'Delete Category',
-                                  'Delete "$category" and unset it from tasks?',
-                                );
-                                if (ok == true) {
-                                  try {
-                                    provider.deleteCategory(category);
-                                  } catch (e) {
-                                    if (mounted) {
-                                      ScaffoldMessenger.of(
-                                        context,
-                                      ).showSnackBar(
-                                        SnackBar(content: Text('Error: $e')),
-                                      );
-                                    }
-                                  }
-                                }
-                              }
-                            },
-                            itemBuilder: (_) => [
-                              const PopupMenuItem(
-                                value: 'rename',
-                                child: Text('Rename'),
-                              ),
-                              const PopupMenuItem(
-                                value: 'delete',
-                                child: Text('Delete'),
-                              ),
-                            ],
-                          ),
-                        ),
-                );
-              },
+                  );
+                },
+              ),
             ),
     );
   }

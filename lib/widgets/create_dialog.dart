@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:task/provider/task_provider.dart';
 import 'package:task/widgets/create_folder_dialog.dart';
+import 'package:task/widgets/create_category_dialog.dart';
 import 'package:task/widgets/icon_mapper.dart';
 
 /// onTapSave: (String taskName, bool isDone, String? folder, String? category)
@@ -205,38 +206,10 @@ class _MyCreateDialogState extends State<MyCreateDialog> {
 
   // Create category dialog (updates provider and refreshes dropdown)
   void _showCreateCategory(BuildContext ctx) async {
-    final c = TextEditingController();
     await showDialog(
       context: ctx,
-      builder: (dctx) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: const Text('Create category'),
-        content: TextField(
-          controller: c,
-          decoration: const InputDecoration(hintText: 'Category name'),
-        ),
-        actions: [
-          FilledButton.tonal(
-            onPressed: () => Navigator.pop(dctx),
-            child: const Text('Cancel'),
-          ),
-          FilledButton(
-            onPressed: () {
-              final name = c.text.trim();
-              if (name.isNotEmpty) {
-                Provider.of<TaskProvider>(
-                  ctx,
-                  listen: false,
-                ).createCategory(name);
-              }
-              Navigator.pop(dctx);
-            },
-            child: const Text('Create'),
-          ),
-        ],
-      ),
+      builder: (dctx) => const CreateCategoryDialog(),
     );
-
     if (mounted) setState(() {}); // refresh dropdown items after creating
   }
 

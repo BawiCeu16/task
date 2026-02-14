@@ -2,6 +2,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:task/utils/category_icons_helper.dart';
 
 enum SortOption {
   newestFirst,
@@ -20,7 +21,9 @@ enum TaskFilter { all, complete, incomplete }
 class TaskProvider with ChangeNotifier {
   final List<Map<String, dynamic>> _tasks = [];
   final List<Map<String, dynamic>> _folders = [];
-  final List<String> _categories = [];
+  // Changed from List<String> to List<Map<String, dynamic>>
+  // Format: {'name': 'CategoryName', 'icon': 12345}
+  final List<Map<String, dynamic>> _categories = [];
 
   SortOption _sortOption = SortOption.newestFirst;
   TaskFilter _taskFilter = TaskFilter.all;
@@ -31,7 +34,13 @@ class TaskProvider with ChangeNotifier {
   List<String> get folders =>
       List.unmodifiable(_folders.map((e) => (e['name'] ?? '').toString()));
   List<Map<String, dynamic>> get folderList => List.unmodifiable(_folders);
-  List<String> get categories => List.unmodifiable(_categories);
+
+  // Backward compatibility: returning names only
+  List<String> get categories =>
+      List.unmodifiable(_categories.map((e) => (e['name'] ?? '').toString()));
+
+  // New getter for full category objects
+  List<Map<String, dynamic>> get categoryList => List.unmodifiable(_categories);
 
   SortOption get currentSortOption => _sortOption;
   TaskFilter get currentFilter => _taskFilter;
@@ -76,9 +85,16 @@ class TaskProvider with ChangeNotifier {
           _folders.add(Map<String, dynamic>.from(item));
         }
       }
-      _categories
-        ..clear()
-        ..addAll(c.map((e) => e.toString()));
+      _categories.clear();
+      for (var item in c) {
+        if (item is String) {
+          // Migration: String -> Map
+          final icon = CategoryIconsHelper.getIconForCategory(item).codePoint;
+          _categories.add({'name': item, 'icon': icon});
+        } else if (item is Map) {
+          _categories.add(Map<String, dynamic>.from(item));
+        }
+      }
 
       if (sortRaw != null && sortRaw.isNotEmpty) {
         try {
@@ -157,9 +173,7 @@ class TaskProvider with ChangeNotifier {
 
       final importedFolders = (obj['folders'] as List<dynamic>? ?? []);
 
-      final importedCategories = (obj['categories'] as List<dynamic>? ?? [])
-          .map((e) => e.toString())
-          .toList();
+      final importedCategories = (obj['categories'] as List<dynamic>? ?? []);
 
       // Merge tasks: skip duplicates by id. If id missing, generate new id.
       for (var t in importedTasks) {
@@ -233,7 +247,20 @@ class TaskProvider with ChangeNotifier {
 
       // Merge categories (avoid duplicates)
       for (var c in importedCategories) {
-        if (!_categories.contains(c)) _categories.add(c);
+        if (c is String) {
+          // Migration
+          if (!_categories.any((x) => (x['name'] ?? '') == c)) {
+            final icon = CategoryIconsHelper.getIconForCategory(c).codePoint;
+            _categories.add({'name': c, 'icon': icon});
+          }
+        } else if (c is Map) {
+          final m = Map<String, dynamic>.from(c);
+          final name = (m['name'] ?? '').toString();
+          if (name.isNotEmpty &&
+              !_categories.any((x) => (x['name'] ?? '') == name)) {
+            _categories.add(m);
+          }
+        }
       }
 
       // Save and notify
@@ -400,11 +427,13 @@ class TaskProvider with ChangeNotifier {
     }
   }
 
-  void createCategory(String name) {
+  void createCategory(String name, {int? icon}) {
     final n = name.trim();
     if (n.isEmpty) return;
-    if (!_categories.any((c) => c.toLowerCase() == n.toLowerCase())) {
-      _categories.insert(0, n);
+    if (!_categories.any(
+      (c) => (c['name'] ?? '').toString().toLowerCase() == n.toLowerCase(),
+    )) {
+      _categories.insert(0, {'name': n, 'icon': icon});
       _saveAll();
       notifyListeners();
     }
@@ -551,7 +580,7 @@ class TaskProvider with ChangeNotifier {
   void deleteCategory(String category) {
     final c = category.trim();
     if (c.isEmpty) return;
-    _categories.removeWhere((x) => x == c);
+    _categories.removeWhere((x) => (x['name'] ?? '') == c);
     for (var t in _tasks) {
       if ((t['category'] ?? '') == c) t['category'] = null;
     }
@@ -580,7 +609,9 @@ class TaskProvider with ChangeNotifier {
   /// Delete all categories. Optionally delete tasks too.
   void deleteAllCategories({bool deleteTasks = false}) {
     if (deleteTasks) {
-      final setCats = _categories.toSet();
+      final setCats = _categories
+          .map((e) => (e['name'] ?? '').toString())
+          .toSet();
       _tasks.removeWhere((t) => setCats.contains((t['category'] ?? '')));
     } else {
       for (var t in _tasks) {
@@ -649,18 +680,25 @@ class TaskProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  void renameCategory(String oldName, String newName) {
+  void renameCategory(String oldName, String newName, {int? icon}) {
     final o = oldName.trim();
     final n = newName.trim();
     if (o.isEmpty || n.isEmpty) return;
-    if (o.toLowerCase() == n.toLowerCase()) return;
 
-    final idx = _categories.indexWhere((c) => c == o);
-    if (idx != -1) _categories[idx] = n;
-
-    for (var t in _tasks) {
-      if ((t['category'] ?? '') == o) t['category'] = n;
+    final idx = _categories.indexWhere((c) => (c['name'] ?? '') == o);
+    if (idx != -1) {
+      if (o.toLowerCase() != n.toLowerCase()) {
+        _categories[idx]['name'] = n;
+        // Update tasks
+        for (var t in _tasks) {
+          if ((t['category'] ?? '') == o) t['category'] = n;
+        }
+      }
+      if (icon != null) {
+        _categories[idx]['icon'] = icon;
+      }
     }
+
     _saveAll();
     notifyListeners();
   }

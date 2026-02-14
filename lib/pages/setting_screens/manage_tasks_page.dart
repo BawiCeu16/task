@@ -66,92 +66,98 @@ class ManageTasksPage extends StatelessWidget {
                 ],
               ),
             )
-          : ListView.builder(
-              padding: const EdgeInsets.all(12),
-              itemCount: tasks.length,
-              itemBuilder: (context, index) {
-                final task = tasks[index];
-                final isDone = (task['isDone'] ?? false) as bool;
-                final taskText = (task['task'] ?? '').toString();
-                final createdDate = (task['createdDate'] ?? '') as String;
+          : SafeArea(
+              child: ListView.builder(
+                padding: const EdgeInsets.all(12),
+                itemCount: tasks.length,
+                itemBuilder: (context, index) {
+                  final task = tasks[index];
+                  final isDone = (task['isDone'] ?? false) as bool;
+                  final taskText = (task['task'] ?? '').toString();
+                  final createdDate = (task['createdDate'] ?? '') as String;
 
-                return Card(
-                  elevation: 0,
-                  margin: const EdgeInsets.only(bottom: 8),
-                  color: Theme.of(
-                    context,
-                  ).colorScheme.surfaceVariant.withOpacity(0.3),
-                  child: ListTile(
-                    leading: Checkbox(
-                      value: isDone,
-                      onChanged: (val) {
-                        try {
-                          final fullListIndex = provider.tasks.indexOf(task);
-                          if (fullListIndex != -1) {
-                            provider.toggleIsDone(fullListIndex);
-                          }
-                        } catch (e) {
-                          ScaffoldMessenger.of(
-                            context,
-                          ).showSnackBar(SnackBar(content: Text('Error: $e')));
-                        }
-                      },
-                    ),
-                    title: Text(
-                      taskText,
-                      style: TextStyle(
-                        decoration: isDone ? TextDecoration.lineThrough : null,
-                        color: isDone
-                            ? Theme.of(context).colorScheme.outline
-                            : null,
-                      ),
-                    ),
-                    subtitle: Text(
-                      'Created: ${_formatDate(createdDate)}',
-                      style: Theme.of(context).textTheme.bodySmall,
-                    ),
-                    trailing: IconButton(
-                      icon: Icon(remixIcon(Icons.delete_outline)),
-                      onPressed: () async {
-                        final confirm = await showDialog<bool>(
-                          context: context,
-                          builder: (ctx) => AlertDialog(
-                            title: const Text('Delete Task'),
-                            content: const Text(
-                              'Are you sure you want to delete this task?',
-                            ),
-                            actions: [
-                              TextButton(
-                                onPressed: () => Navigator.pop(ctx, false),
-                                child: const Text('Cancel'),
-                              ),
-                              FilledButton(
-                                onPressed: () => Navigator.pop(ctx, true),
-                                child: const Text('Delete'),
-                              ),
-                            ],
-                          ),
-                        );
-
-                        if (confirm == true) {
+                  return Card(
+                    elevation: 0,
+                    margin: const EdgeInsets.only(bottom: 8),
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.surfaceVariant.withOpacity(0.3),
+                    child: ListTile(
+                      leading: Checkbox(
+                        value: isDone,
+                        onChanged: (val) {
                           try {
                             final fullListIndex = provider.tasks.indexOf(task);
                             if (fullListIndex != -1) {
-                              provider.deleteTask(fullListIndex);
+                              provider.toggleIsDone(fullListIndex);
                             }
                           } catch (e) {
-                            if (context.mounted) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text('Error: $e')),
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text('Error: $e')),
+                            );
+                          }
+                        },
+                      ),
+                      title: Text(
+                        taskText,
+                        style: TextStyle(
+                          decoration: isDone
+                              ? TextDecoration.lineThrough
+                              : null,
+                          color: isDone
+                              ? Theme.of(context).colorScheme.outline
+                              : null,
+                        ),
+                      ),
+                      subtitle: Text(
+                        'Created: ${_formatDate(createdDate)}',
+                        style: Theme.of(context).textTheme.bodySmall,
+                      ),
+                      trailing: IconButton(
+                        icon: Icon(remixIcon(Icons.delete_outline)),
+                        onPressed: () async {
+                          final confirm = await showDialog<bool>(
+                            context: context,
+                            builder: (ctx) => AlertDialog(
+                              title: const Text('Delete Task'),
+                              content: const Text(
+                                'Are you sure you want to delete this task?',
+                              ),
+                              actions: [
+                                TextButton(
+                                  onPressed: () => Navigator.pop(ctx, false),
+                                  child: const Text('Cancel'),
+                                ),
+                                FilledButton(
+                                  onPressed: () => Navigator.pop(ctx, true),
+                                  child: const Text('Delete'),
+                                ),
+                              ],
+                            ),
+                          );
+
+                          if (confirm == true) {
+                            try {
+                              final fullListIndex = provider.tasks.indexOf(
+                                task,
                               );
+                              if (fullListIndex != -1) {
+                                provider.deleteTask(fullListIndex);
+                              }
+                            } catch (e) {
+                              if (context.mounted) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: Text('Error: $e')),
+                                );
+                              }
                             }
                           }
-                        }
-                      },
+                        },
+                      ),
                     ),
-                  ),
-                );
-              },
+                  );
+                },
+              ),
             ),
     );
   }

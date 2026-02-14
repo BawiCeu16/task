@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:task/provider/task_provider.dart';
+import 'package:task/widgets/category_list_item.dart';
 import 'package:task/widgets/create_category_dialog.dart';
 import 'package:task/widgets/icon_mapper.dart';
+import 'package:task/utils/category_icons_helper.dart';
 import 'package:task/pages/main_pages/category_detail_page.dart';
 
 class CategoryPage extends StatelessWidget {
@@ -11,7 +13,8 @@ class CategoryPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<TaskProvider>(context);
-    final cats = provider.categories;
+    // Use categoryList to get access to icon data
+    final cats = provider.categoryList;
 
     return Scaffold(
       body: CustomScrollView(
@@ -57,44 +60,17 @@ class CategoryPage extends StatelessWidget {
               padding: const EdgeInsets.all(8.0),
               sliver: SliverList(
                 delegate: SliverChildBuilderDelegate((context, i) {
-                  final cat = cats[i];
-                  final tasks = provider.tasksInCategory(cat);
-                  final count = tasks.length;
+                  final catData = cats[i];
+                  final catName = (catData['name'] ?? '').toString();
+                  final catIconCode = catData['icon'] as int?;
+                  final count = provider.tasksInCategory(catName).length;
 
-                  return Padding(
-                    padding: const EdgeInsets.only(bottom: 8.0),
-                    child: Card(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      elevation: 0,
-                      child: ListTile(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 12,
-                        ),
-                        title: Text(
-                          cat,
-                          style: const TextStyle(fontWeight: FontWeight.w600),
-                        ),
-                        subtitle: Text('$count task${count == 1 ? "" : "s"}'),
-                        trailing: Icon(remixIcon(Icons.chevron_right)),
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) =>
-                                  CategoryDetailPage(categoryName: cat),
-                            ),
-                          );
-                        },
-                        onLongPress: () =>
-                            _showCategoryOptions(context, provider, cat),
-                      ),
-                    ),
+                  return CategoryListItem(
+                    categoryName: catName,
+                    iconCode: catIconCode,
+                    taskCount: count,
+                    onLongPress: () =>
+                        _showCategoryOptions(context, provider, catName),
                   );
                 }, childCount: cats.length),
               ),
@@ -268,10 +244,13 @@ class _EditCategoryDialogState extends State<_EditCategoryDialog> {
           onPressed: () {
             final newName = _c.text.trim();
             if (newName.isNotEmpty && newName != widget.startName) {
-              Provider.of<TaskProvider>(
-                context,
-                listen: false,
-              ).renameCategory(widget.startName, newName);
+              // Auto-update icon on rename
+              final newIcon = CategoryIconsHelper.getIconForCategory(newName);
+              Provider.of<TaskProvider>(context, listen: false).renameCategory(
+                widget.startName,
+                newName,
+                icon: newIcon.codePoint,
+              );
             }
             Navigator.pop(context);
           },

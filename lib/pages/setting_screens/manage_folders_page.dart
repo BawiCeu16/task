@@ -150,99 +150,104 @@ class _ManageFoldersPageState extends State<ManageFoldersPage> {
                 ),
               ),
             )
-          : ListView.builder(
-              padding: const EdgeInsets.all(12),
-              itemCount: folders.length,
-              itemBuilder: (context, index) {
-                final folder = folders[index];
-                final isRenaming = _renamingFolder == folder;
-                final count = provider.tasksInFolder(folder).length;
+          : SafeArea(
+              child: ListView.builder(
+                padding: const EdgeInsets.all(12),
+                itemCount: folders.length,
+                itemBuilder: (context, index) {
+                  final folder = folders[index];
+                  final isRenaming = _renamingFolder == folder;
+                  final count = provider.tasksInFolder(folder).length;
 
-                return Card(
-                  elevation: 0,
-                  margin: const EdgeInsets.only(bottom: 8),
-                  child: isRenaming
-                      ? Form(
-                          key: _renameFormKey,
-                          child: ListTile(
-                            title: TextFormField(
-                              controller: _renameController,
-                              autofocus: true,
-                              decoration: const InputDecoration(
-                                isDense: true,
-                                border: InputBorder.none,
-                              ),
-                              onFieldSubmitted: (v) =>
-                                  _performRename(provider, folder, v.trim()),
-                              validator: (v) => (v == null || v.trim().isEmpty)
-                                  ? 'Cannot be empty'
-                                  : null,
-                            ),
-                            trailing: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                IconButton(
-                                  icon: Icon(remixIcon(Icons.check)),
-                                  onPressed: () {
-                                    if (_renameFormKey.currentState!
-                                        .validate()) {
-                                      _performRename(
-                                        provider,
-                                        folder,
-                                        _renameController.text.trim(),
-                                      );
-                                    }
-                                  },
+                  return Card(
+                    elevation: 0,
+                    margin: const EdgeInsets.only(bottom: 8),
+                    child: isRenaming
+                        ? Form(
+                            key: _renameFormKey,
+                            child: ListTile(
+                              title: TextFormField(
+                                controller: _renameController,
+                                autofocus: true,
+                                decoration: const InputDecoration(
+                                  isDense: true,
+                                  border: InputBorder.none,
                                 ),
-                                IconButton(
-                                  icon: Icon(remixIcon(Icons.close)),
-                                  onPressed: _exitRenameMode,
+                                onFieldSubmitted: (v) =>
+                                    _performRename(provider, folder, v.trim()),
+                                validator: (v) =>
+                                    (v == null || v.trim().isEmpty)
+                                    ? 'Cannot be empty'
+                                    : null,
+                              ),
+                              trailing: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  IconButton(
+                                    icon: Icon(remixIcon(Icons.check)),
+                                    onPressed: () {
+                                      if (_renameFormKey.currentState!
+                                          .validate()) {
+                                        _performRename(
+                                          provider,
+                                          folder,
+                                          _renameController.text.trim(),
+                                        );
+                                      }
+                                    },
+                                  ),
+                                  IconButton(
+                                    icon: Icon(remixIcon(Icons.close)),
+                                    onPressed: _exitRenameMode,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          )
+                        : ListTile(
+                            title: Text(folder),
+                            subtitle: Text(
+                              '$count task${count == 1 ? '' : 's'}',
+                            ),
+                            trailing: PopupMenuButton<String>(
+                              onSelected: (v) async {
+                                if (v == 'rename') {
+                                  _startRenameMode(folder);
+                                } else if (v == 'delete') {
+                                  final ok = await _confirm(
+                                    'Delete Folder',
+                                    'Delete "$folder" and its tasks?',
+                                  );
+                                  if (ok == true) {
+                                    try {
+                                      provider.deleteFolder(folder);
+                                    } catch (e) {
+                                      if (mounted) {
+                                        ScaffoldMessenger.of(
+                                          context,
+                                        ).showSnackBar(
+                                          SnackBar(content: Text('Error: $e')),
+                                        );
+                                      }
+                                    }
+                                  }
+                                }
+                              },
+                              itemBuilder: (_) => [
+                                const PopupMenuItem(
+                                  value: 'rename',
+                                  child: Text('Rename'),
+                                ),
+                                const PopupMenuItem(
+                                  value: 'delete',
+                                  child: Text('Delete'),
                                 ),
                               ],
                             ),
                           ),
-                        )
-                      : ListTile(
-                          title: Text(folder),
-                          subtitle: Text('$count task${count == 1 ? '' : 's'}'),
-                          trailing: PopupMenuButton<String>(
-                            onSelected: (v) async {
-                              if (v == 'rename') {
-                                _startRenameMode(folder);
-                              } else if (v == 'delete') {
-                                final ok = await _confirm(
-                                  'Delete Folder',
-                                  'Delete "$folder" and its tasks?',
-                                );
-                                if (ok == true) {
-                                  try {
-                                    provider.deleteFolder(folder);
-                                  } catch (e) {
-                                    if (mounted) {
-                                      ScaffoldMessenger.of(
-                                        context,
-                                      ).showSnackBar(
-                                        SnackBar(content: Text('Error: $e')),
-                                      );
-                                    }
-                                  }
-                                }
-                              }
-                            },
-                            itemBuilder: (_) => [
-                              const PopupMenuItem(
-                                value: 'rename',
-                                child: Text('Rename'),
-                              ),
-                              const PopupMenuItem(
-                                value: 'delete',
-                                child: Text('Delete'),
-                              ),
-                            ],
-                          ),
-                        ),
-                );
-              },
+                  );
+                },
+              ),
             ),
     );
   }
