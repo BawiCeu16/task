@@ -43,8 +43,7 @@ android {
                 keyAlias = System.getenv("KEY_ALIAS")
                 keyPassword = System.getenv("KEY_PASSWORD")
             } else {
-                // Development/CI: Use debug keystore
-                // This is safe for CI builds and development
+                // CI/Development: Use debug keystore (created by workflow or local)
                 storeFile = file("${System.getProperty("user.home")}/.android/debug.keystore")
                 storePassword = "android"
                 keyAlias = "androiddebugkey"
