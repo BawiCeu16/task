@@ -2,7 +2,7 @@
 
 > A **minimalist, open-source** task management application built with Flutter. Experience powerful functionality with a clean, intuitive design and rich customization options.
 
-## ✨ Features
+## Features
 
 - **Minimalist Design** - Clean, distraction-free interface focused on productivity
 - **Rich Customizations** - Personalize your experience with extensive theme and layout options
@@ -11,7 +11,7 @@
 - **AI-Powered Development** - Built using VS Code with AI Agent assistance for intelligent development
 - **Antigravity Integration** - Advanced floating UI elements and dynamic interactions
 
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
 - Flutter SDK (latest version)
@@ -36,13 +36,12 @@ flutter pub get
 flutter run
 ```
 
-## 🛠️ Development
+## Development
 
 This project leverages:
-- **VS Code** - Modern development environment with AI Agent extensions
+- **VS Code and Antigravity** - Modern development environment with AI Agent extensions
 - **Flutter** - Cross-platform framework
 - **Provider** - State management
-- **Antigravity** - Advanced UI components
 
 ### Build for Different Platforms
 
@@ -66,7 +65,7 @@ flutter build windows
 flutter build linux
 ```
 
-## 📝 Project Structure
+## Project Structure
 
 ```
 lib/
@@ -77,7 +76,7 @@ lib/
 └── widgets/               # Reusable UI components
 ```
 
-## 🎨 Customization
+## Customization
 
 The app supports:
 - **Theme Customization** - Dark/Light modes and custom color schemes
@@ -85,31 +84,31 @@ The app supports:
 - **Category Management** - Organize tasks with custom categories
 - **Folder Structures** - Create nested task hierarchies
 
-## 📦 Release Notes
+## Release Notes
 
 Check out our [GitHub Release Tags](https://github.com/bawiceu/task/releases) for version history and updates.
 
-## 💬 Stay Updated
+## Stay Updated
 
 - **Telegram Channel** - [Join our community](https://t.me/bawiceu) for announcements and discussions
 - **Email** - Contact us at **bawiceu142@gmail.com** for support and feedback
 
-## 📄 License
+## License
 
 This project is open source and available under the MIT License. See the LICENSE file for details.
 
-## 🤝 Contributing
+## Contributing
 
 We welcome contributions! Please feel free to submit issues and pull requests.
 
-## 👨‍💻 About
+## About
 
-Developed with ❤️ using Flutter, VS Code, and AI-assisted development tools (Antigravity framework included).
+Developed with using Flutter, VS Code, and AI-assisted development tools (Antigravity framework included).
 
 **Built by:** bawiceu  
-**Email:** [bawiceu142@gmail.com](mailto:bawiceu142@gmail.com)  
-**Telegram:** [Community Channel](https://t.me/bawiceu)  
-**GitHub:** [Release Tags](https://github.com/bawiceu/task/releases)
+**Email:** [bawiceu1428@gmail.com](mailto:bawiceu142@gmail.com)  
+**Telegram:** [Community Channel](https://t.me/bawiceuapp)  
+**GitHub:** [Release Tags](https://github.com/BawiCeu16/task/releases)
 
 ---
 
