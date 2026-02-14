@@ -42,7 +42,7 @@ class _HomeScreenState extends State<HomeScreen> {
         // When wide: show NavigationRail at left and content to the right
         if (isWide) {
           return Scaffold(
-            backgroundColor: Theme.of(context).colorScheme.background,
+            backgroundColor: Theme.of(context).colorScheme.surface,
             body: SafeArea(
               child: Row(
                 children: [
