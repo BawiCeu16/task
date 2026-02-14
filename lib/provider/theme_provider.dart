@@ -106,7 +106,7 @@ class ThemeProvider with ChangeNotifier {
     notifyListeners();
     try {
       final prefs = await SharedPreferences.getInstance();
-      await prefs.setInt(_prefsKeySeed, color.value);
+      await prefs.setInt(_prefsKeySeed, color.toARGB32());
     } catch (_) {}
   }
 
@@ -193,11 +193,11 @@ class ThemeProvider with ChangeNotifier {
       onError: desaturate(cs.onError),
       errorContainer: desaturate(cs.errorContainer),
       onErrorContainer: desaturate(cs.onErrorContainer),
-      background: desaturate(cs.background),
-      onBackground: desaturate(cs.onBackground),
+      background: desaturate(cs.surface),
+      onBackground: desaturate(cs.onSurface),
       surface: desaturate(cs.surface),
       onSurface: desaturate(cs.onSurface),
-      surfaceVariant: desaturate(cs.surfaceVariant),
+      surfaceVariant: desaturate(cs.surfaceContainerHighest),
       onSurfaceVariant: desaturate(cs.onSurfaceVariant),
       outline: desaturate(cs.outline),
       outlineVariant: desaturate(cs.outlineVariant),
@@ -247,7 +247,7 @@ class ThemeProvider with ChangeNotifier {
       useMaterial3: true,
       colorScheme: cs,
       brightness: cs.brightness,
-      scaffoldBackgroundColor: cs.background,
+      scaffoldBackgroundColor: cs.surface,
       appBarTheme: AppBarTheme(
         backgroundColor: cs.surface,
         foregroundColor: cs.onSurface,
@@ -303,7 +303,7 @@ class ThemeProvider with ChangeNotifier {
       useMaterial3: true,
       colorScheme: cs,
       brightness: cs.brightness,
-      scaffoldBackgroundColor: cs.background,
+      scaffoldBackgroundColor: cs.surface,
       appBarTheme: AppBarTheme(
         backgroundColor: cs.surface,
         foregroundColor: cs.onSurface,
@@ -341,7 +341,7 @@ class ThemeProvider with ChangeNotifier {
           : _themeMode == ThemeMode.dark
           ? 'dark'
           : 'system',
-      'seedColor': _seedColor.value,
+      'seedColor': _seedColor.toARGB32(),
       'themeSource': _themeSource.name,
       'buttonHeight': _buttonHeight,
       'buttonRadius': _buttonRadius,
@@ -390,7 +390,7 @@ class ThemeProvider with ChangeNotifier {
             ? 'dark'
             : 'system',
       );
-      await prefs.setInt(_prefsKeySeed, _seedColor.value);
+      await prefs.setInt(_prefsKeySeed, _seedColor.toARGB32());
       await prefs.setString(_prefsKeySource, _themeSource.name);
       await prefs.setDouble(_prefsKeyButtonHeight, _buttonHeight);
       await prefs.setDouble(_prefsKeyButtonRadius, _buttonRadius);
