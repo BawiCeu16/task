@@ -49,7 +49,7 @@ class _SettingsPageState extends State<SettingsPage> {
               onTap: () => Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => const Appearance_Settings(),
+                  builder: (context) => const AppearanceSettings(),
                 ),
               ),
             ),

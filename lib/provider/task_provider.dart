@@ -180,9 +180,7 @@ class TaskProvider with ChangeNotifier {
         var id = (t['id'] ?? '').toString();
         if (id.isEmpty) {
           id =
-              DateTime.now().millisecondsSinceEpoch.toString() +
-              '_' +
-              (t['task'] ?? '').toString().hashCode.toString();
+              '${DateTime.now().millisecondsSinceEpoch}_${(t['task'] ?? '').toString().hashCode}';
         }
 
         final exists = _tasks.any((x) => (x['id'] ?? '') == id);

@@ -94,158 +94,121 @@ class AboutPage extends StatelessWidget {
                     borderRadius: BorderRadius.circular(12),
                   ),
                   color: Theme.of(context).colorScheme.surfaceContainerLow,
-                  child: Container(
-                    // decoration: BoxDecoration(
-                    //   border: Border.all(
-                    //     width: 2,
-                    //     color: Theme.of(context).colorScheme.surfaceContainerHigh,
-                    //   ),
-                    //   borderRadius: BorderRadius.circular(10),
-                    // ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(10.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          // Developer Section
-                          Padding(
-                            padding: EdgeInsets.only(
-                              left: 10,
-                              top: 10,
-                              bottom: 5,
+                  child: Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Developer Section
+                        Padding(
+                          padding: EdgeInsets.only(
+                            left: 10,
+                            top: 10,
+                            bottom: 5,
+                          ),
+                          child: Text(
+                            'Developer',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
                             ),
-                            child: Text(
-                              'Developer',
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
+                          ),
+                        ),
+
+                        _buildContributorTile(
+                          'BawiCeu',
+                          'https://bawiceu16.github.io/bawiceu.dev/',
+                          CircleAvatar(
+                            radius: 20,
+                            backgroundImage: NetworkImage(
+                              'https://github.com/BawiCeu16.png',
+                            ),
+                            backgroundColor: Theme.of(
+                              context,
+                            ).colorScheme.surfaceContainerHighest,
+                          ),
+                        ),
+                        const SizedBox(height: 5.0),
+
+                        Divider(),
+
+                        const SizedBox(height: 5.0),
+
+                        // Connect Section
+                        Padding(
+                          padding: const EdgeInsets.only(
+                            left: 10,
+                            top: 15,
+                            bottom: 5,
+                          ),
+                          child: Text(
+                            'Connect',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                        _buildContributorTile(
+                          'Follow on Github',
+                          'https://github.com/BawiCeu16',
+                          Icon(remixIcon(Icons.link)),
+                        ),
+                        _buildContributorTile(
+                          'Visit Website',
+                          'https://bawiceu16.github.io/bawiceu.dev/',
+                          Icon(remixIcon(Icons.language)),
+                        ),
+                        const SizedBox(height: 5.0),
+                        const Divider(),
+                        const SizedBox(height: 5.0),
+
+                        // GitHub Repo
+                        ListTile(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(100),
+                          ),
+                          leading: Icon(remixIcon(Icons.code)),
+                          title: const Text('Source Code'),
+                          onTap: () async {
+                            launchUrl(
+                              Uri.parse('https://github.com/BawiCeu16/task'),
+                            );
+                          },
+                        ),
+                        // Privacy Policy
+                        ListTile(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadiusGeometry.circular(100),
+                          ),
+                          leading: Icon(remixIcon(Icons.shield_outlined)),
+                          title: Text('Privacy Policy'),
+                          onTap: () async {
+                            launchUrl(
+                              Uri.parse(
+                                'https://bawiceu16.github.io/task-privacy-and-policy-/',
                               ),
-                            ),
+                            );
+                          },
+                        ),
+                        // Open Source Licenses
+                        ListTile(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadiusGeometry.circular(100),
                           ),
-
-                          _buildContributorTile(
-                            'BawiCeu',
-                            'https://bawiceu16.github.io/bawiceu.dev/',
-                            CircleAvatar(
-                              radius: 20,
-                              backgroundImage: NetworkImage(
-                                'https://github.com/BawiCeu16.png',
-                              ),
-                              backgroundColor: Theme.of(
-                                context,
-                              ).colorScheme.surfaceContainerHighest,
-                            ),
+                          leading: Icon(remixIcon(Icons.article)),
+                          title: Text('OpenSource Licenses'),
+                          onTap: () => showLicensePage(
+                            context: context,
+                            applicationName: appInfo.appName,
+                            applicationVersion: appInfo.version,
+                            applicationLegalese: '© 2025 Nix',
                           ),
-                          const SizedBox(height: 5.0),
-
-                          Divider(),
-
-                          const SizedBox(height: 5.0),
-
-                          // Connect Section
-                          Padding(
-                            padding: const EdgeInsets.only(
-                              left: 10,
-                              top: 15,
-                              bottom: 5,
-                            ),
-                            child: Text(
-                              'Connect',
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                          _buildContributorTile(
-                            'Follow on Github',
-                            'https://github.com/BawiCeu16',
-                            Icon(remixIcon(Icons.link)),
-                          ),
-                          _buildContributorTile(
-                            'Visit Website',
-                            'https://bawiceu16.github.io/bawiceu.dev/',
-                            Icon(remixIcon(Icons.language)),
-                          ),
-                          const SizedBox(height: 5.0),
-                          const Divider(),
-                          const SizedBox(height: 5.0),
-
-                          // GitHub Repo
-                          ListTile(
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(100),
-                            ),
-                            leading: Icon(remixIcon(Icons.code)),
-                            title: const Text('Source Code'),
-                            onTap: () async {
-                              launchUrl(
-                                Uri.parse('https://github.com/BawiCeu16/task'),
-                              );
-                            },
-                          ),
-                          // Privacy Policy
-                          ListTile(
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadiusGeometry.circular(100),
-                            ),
-                            leading: Icon(remixIcon(Icons.shield_outlined)),
-                            title: Text('Privacy Policy'),
-                            onTap: () async {
-                              launchUrl(
-                                Uri.parse(
-                                  'https://bawiceu16.github.io/task-privacy-and-policy-/',
-                                ),
-                              );
-                            },
-                          ),
-                          // Open Source Licenses
-                          ListTile(
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadiusGeometry.circular(100),
-                            ),
-                            leading: Icon(remixIcon(Icons.article)),
-                            title: Text('OpenSource Licenses'),
-                            onTap: () => showLicensePage(
-                              context: context,
-                              applicationName: appInfo.appName,
-                              applicationVersion: appInfo.version,
-                              applicationLegalese: '© 2025 Nix',
-                            ),
-                          ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
-
-                /// --- New version flag ---
-                if (appInfo.isNewVersion)
-                  Padding(
-                    padding: const EdgeInsets.only(top: 10),
-                    child: Container(
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(12),
-                        color: Colors.orange.withOpacity(0.2),
-                      ),
-                      child: Row(
-                        children: [
-                          Icon(
-                            remixIcon(Icons.new_releases),
-                            color: Colors.orange,
-                          ),
-                          SizedBox(width: 10),
-                          Expanded(
-                            child: Text(
-                              "A new version was detected on this device.",
-                              style: TextStyle(fontSize: 14),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
               ],
             ),
           ),

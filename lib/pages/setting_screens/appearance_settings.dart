@@ -5,7 +5,7 @@ import 'package:task/widgets/icon_mapper.dart';
 import 'package:task/widgets/setting_widgets/bottom_list_tile.dart';
 import 'package:task/widgets/setting_widgets/top_list_tile.dart';
 
-class Appearance_Settings extends StatelessWidget {
+class AppearanceSettings extends StatelessWidget {
   // small palette for quick choosing
   static const List<Color> _palette = [
     Colors.blue,
@@ -18,7 +18,7 @@ class Appearance_Settings extends StatelessWidget {
     Colors.yellow,
   ];
 
-  const Appearance_Settings({super.key});
+  const AppearanceSettings({super.key});
 
   @override
   Widget build(BuildContext context) {
