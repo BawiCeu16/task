@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:task/constants/app_constants.dart';
 import 'package:task/provider/task_provider.dart';
-import 'package:task/widgets/icon_mapper.dart';
+import 'package:task/services/index.dart';
 import 'package:task/utils/category_icons_helper.dart';
+import 'package:task/widgets/icon_mapper.dart';
 
 class ManageCategoriesPage extends StatefulWidget {
   const ManageCategoriesPage({super.key});
@@ -11,7 +13,8 @@ class ManageCategoriesPage extends StatefulWidget {
   State<ManageCategoriesPage> createState() => _ManageCategoriesPageState();
 }
 
-class _ManageCategoriesPageState extends State<ManageCategoriesPage> {
+class _ManageCategoriesPageState extends State<ManageCategoriesPage>
+    with ConfirmationMixin, SnackBarMixin {
   String? _renamingCategory;
   final _renameController = TextEditingController();
   final _renameFormKey = GlobalKey<FormState>();
@@ -41,47 +44,15 @@ class _ManageCategoriesPageState extends State<ManageCategoriesPage> {
       provider.renameCategory(oldName, newName, icon: newIcon.codePoint);
 
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Renamed "$oldName" to "$newName"')),
-        );
+        showSuccessSnackBar(context, 'Renamed "$oldName" to "$newName"');
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Error: $e'),
-            backgroundColor: Theme.of(context).colorScheme.error,
-          ),
-        );
+        showErrorSnackBar(context, 'Error: $e');
       }
     } finally {
       _exitRenameMode();
     }
-  }
-
-  Future<bool?> _confirm(String title, String body) {
-    return showDialog<bool>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text(title),
-        content: Text(body),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, false),
-            child: const Text('Cancel'),
-          ),
-          FilledButton(
-            style: ButtonStyle(
-              backgroundColor: WidgetStatePropertyAll(
-                Theme.of(ctx).colorScheme.error,
-              ),
-            ),
-            onPressed: () => Navigator.pop(ctx, true),
-            child: const Text('Confirm'),
-          ),
-        ],
-      ),
-    );
   }
 
   @override
@@ -100,9 +71,10 @@ class _ManageCategoriesPageState extends State<ManageCategoriesPage> {
               icon: Icon(remixIcon(Icons.delete_sweep_outlined)),
               tooltip: 'Delete all categories',
               onPressed: () async {
-                final confirm = await _confirm(
-                  'Delete all categories',
-                  'This will remove all categories. Do you also want to delete tasks inside them?',
+                final confirm = await showConfirmation(
+                  context,
+                  title: AppConstants.confirmDeleteAllCategories,
+                  content: 'Do you also want to delete tasks inside them?',
                 );
                 if (confirm == true) {
                   final deleteTasks = await showDialog<bool>(
@@ -127,18 +99,11 @@ class _ManageCategoriesPageState extends State<ManageCategoriesPage> {
                   try {
                     provider.deleteAllCategories(deleteTasks: deleteTasks);
                     if (mounted) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('All categories cleared')),
-                      );
+                      showSuccessSnackBar(context, 'All categories cleared');
                     }
                   } catch (e) {
                     if (mounted) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text('Error: $e'),
-                          backgroundColor: Theme.of(context).colorScheme.error,
-                        ),
-                      );
+                      showErrorSnackBar(context, 'Error: $e');
                     }
                   }
                 }
@@ -233,20 +198,18 @@ class _ManageCategoriesPageState extends State<ManageCategoriesPage> {
                                 if (v == 'rename') {
                                   _startRenameMode(categoryName);
                                 } else if (v == 'delete') {
-                                  final ok = await _confirm(
-                                    'Delete Category',
-                                    'Delete "$categoryName" and unset it from tasks?',
+                                  final ok = await showConfirmation(
+                                    context,
+                                    title: 'Delete Category',
+                                    content:
+                                        'Delete "$categoryName" and unset it from tasks?',
                                   );
                                   if (ok == true) {
                                     try {
                                       provider.deleteCategory(categoryName);
                                     } catch (e) {
                                       if (mounted) {
-                                        ScaffoldMessenger.of(
-                                          context,
-                                        ).showSnackBar(
-                                          SnackBar(content: Text('Error: $e')),
-                                        );
+                                        showErrorSnackBar(context, 'Error: $e');
                                       }
                                     }
                                   }

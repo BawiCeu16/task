@@ -1,6 +1,7 @@
 // lib/widgets/create_category_dialog.dart
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:task/constants/app_constants.dart';
 import 'package:task/provider/task_provider.dart';
 import 'package:task/utils/category_icons_helper.dart';
 
@@ -64,7 +65,9 @@ class _CreateCategoryDialogState extends State<CreateCategoryDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      shape: RoundedRectangleBorder(
+        borderRadius: AppConstants.dialogBorderRadius,
+      ),
       title: const Text('Create Category'),
       content: Column(
         mainAxisSize: MainAxisSize.min,

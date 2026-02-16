@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:intl/intl.dart';
 import 'package:task/provider/task_provider.dart';
+import 'package:task/services/index.dart';
 import 'package:task/pages/setting_screens/manage_tasks_page.dart';
 import 'package:task/pages/setting_screens/manage_folders_page.dart';
 import 'package:task/pages/setting_screens/manage_categories_page.dart';
 
-// 1. Convert to StatefulWidget
 class ManageAllPage extends StatefulWidget {
   const ManageAllPage({super.key});
 
@@ -14,69 +13,27 @@ class ManageAllPage extends StatefulWidget {
   State<ManageAllPage> createState() => _ManageAllPageState();
 }
 
-class _ManageAllPageState extends State<ManageAllPage> {
-  // existing _confirm method (unchanged, omitted for brevity)
-  Future<bool?> _confirm(BuildContext c, String title, String body) {
-    return showDialog<bool>(
-      context: c,
-      builder: (ctx) => AlertDialog(
-        shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(20)),
-        ),
-        title: Text(title),
-        content: Text(body),
-        actions: [
-          FilledButton.tonal(
-            onPressed: () => Navigator.pop(ctx, false),
-            child: const Text('Cancel'),
-          ),
-          FilledButton(
-            style: ButtonStyle(
-              backgroundColor: WidgetStatePropertyAll(
-                Theme.of(ctx).colorScheme.error,
-              ),
-            ),
-            onPressed: () => Navigator.pop(ctx, true),
-            child: const Text('Confirm'),
-          ),
-        ],
-      ),
-    );
-  }
-
+class _ManageAllPageState extends State<ManageAllPage>
+    with ConfirmationMixin, SnackBarMixin {
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<TaskProvider>(context);
-    final folders = provider.folders;
-    final categories = provider.categories;
     final tasks = provider.tasks;
 
-    // ... summary metrics logic (omitted for brevity) ...
+    // Use TaskStatsService for all calculations
     final totalTasks = tasks.length;
-    final totalFolders = folders.length;
-    final totalCategories = categories.length;
-    final completed = tasks.where((t) => (t['isDone'] ?? false) as bool).length;
-    final incomplete = totalTasks - completed;
-    final withoutFolder = tasks
-        .where((t) => (t['folder'] ?? '').toString().isEmpty)
-        .length;
-    final withoutCategory = tasks
-        .where((t) => (t['category'] ?? '').toString().isEmpty)
-        .length;
+    final totalFolders = provider.folders.length;
+    final totalCategories = provider.categories.length;
+    final completed = TaskStatsService.getCompletedCount(tasks);
+    final incomplete = TaskStatsService.getIncompleteCount(tasks);
+    final withoutFolder = TaskStatsService.getTasksWithoutFolder(tasks);
+    final withoutCategory = TaskStatsService.getTasksWithoutCategory(tasks);
 
-    DateTime? oldest;
-    DateTime? newest;
-    for (var t in tasks) {
-      final iso = (t['createdDate'] ?? '') as String;
-      try {
-        final dt = DateTime.parse(iso);
-        if (oldest == null || dt.isBefore(oldest)) oldest = dt;
-        if (newest == null || dt.isAfter(newest)) newest = dt;
-      } catch (_) {}
-    }
-
-    final oldestStr = oldest == null ? '-' : DateFormat.yMMMd().format(oldest);
-    final newestStr = newest == null ? '-' : DateFormat.yMMMd().format(newest);
+    // Use DateFormatterService for date operations with getDateRangeString helper
+    final dateRangeStr = TaskStatsService.getDateRangeString(
+      tasks,
+      (date) => DateFormatterService.formatDate(date),
+    );
 
     return Scaffold(
       appBar: AppBar(
@@ -211,18 +168,7 @@ class _ManageAllPageState extends State<ManageAllPage> {
                       ],
                     ),
                     const SizedBox(height: 10),
-                    Row(
-                      children: [
-                        Expanded(child: Text('Oldest: $oldestStr')),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: Text(
-                            'Newest: $newestStr',
-                            textAlign: TextAlign.right,
-                          ),
-                        ),
-                      ],
-                    ),
+                    Row(children: [Expanded(child: Text(dateRangeStr))]),
                   ],
                 ),
               ),
@@ -253,10 +199,11 @@ class _ManageAllPageState extends State<ManageAllPage> {
                         // Delete all folders button
                         FilledButton.tonal(
                           onPressed: () async {
-                            final confirm = await _confirm(
+                            final confirm = await showConfirmation(
                               context,
-                              'Delete all folders',
-                              'Delete all folders. This can also remove tasks inside them.',
+                              title: 'Delete all folders',
+                              content:
+                                  'Delete all folders. This can also remove tasks inside them?',
                             );
                             if (confirm == true) {
                               final deleteTasks = await showDialog<bool>(
@@ -315,31 +262,24 @@ class _ManageAllPageState extends State<ManageAllPage> {
                         // Clear folder tags button
                         FilledButton.tonal(
                           onPressed: () async {
-                            final confirm = await _confirm(
+                            final confirm = await showConfirmation(
                               context,
-                              'Clear folder tags',
-                              'Unset folder tag from all tasks (keeps the tasks).',
+                              title: 'Clear folder tags',
+                              content:
+                                  'Unset folder tag from all tasks (keeps the tasks).',
                             );
                             if (confirm == true) {
                               try {
                                 provider.deleteAllFolders(deleteTasks: false);
                                 if (mounted) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                      content: Text('Folder tags cleared'),
-                                    ),
+                                  showSuccessSnackBar(
+                                    context,
+                                    'Folder tags cleared',
                                   );
                                 }
                               } catch (e) {
                                 if (mounted) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text('Error: $e'),
-                                      backgroundColor: Theme.of(
-                                        context,
-                                      ).colorScheme.error,
-                                    ),
-                                  );
+                                  showErrorSnackBar(context, 'Error: $e');
                                 }
                               }
                             }
@@ -349,10 +289,11 @@ class _ManageAllPageState extends State<ManageAllPage> {
                         // Delete all categories button
                         FilledButton.tonal(
                           onPressed: () async {
-                            final confirm = await _confirm(
+                            final confirm = await showConfirmation(
                               context,
-                              'Delete all categories',
-                              'Delete all categories. Optionally remove tasks in those categories.',
+                              title: 'Delete all categories',
+                              content:
+                                  'Delete all categories. Optionally remove tasks in those categories.',
                             );
                             if (confirm == true) {
                               final deleteTasks = await showDialog<bool>(
@@ -377,7 +318,6 @@ class _ManageAllPageState extends State<ManageAllPage> {
                                 ),
                               );
 
-                              // Handle dialog dismissal
                               if (deleteTasks == null) return;
 
                               try {
@@ -385,22 +325,14 @@ class _ManageAllPageState extends State<ManageAllPage> {
                                   deleteTasks: deleteTasks,
                                 );
                                 if (mounted) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                      content: Text('All categories cleared'),
-                                    ),
+                                  showSuccessSnackBar(
+                                    context,
+                                    'All categories cleared',
                                   );
                                 }
                               } catch (e) {
                                 if (mounted) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text('Error: $e'),
-                                      backgroundColor: Theme.of(
-                                        context,
-                                      ).colorScheme.error,
-                                    ),
-                                  );
+                                  showErrorSnackBar(context, 'Error: $e');
                                 }
                               }
                             }
@@ -410,10 +342,11 @@ class _ManageAllPageState extends State<ManageAllPage> {
                         // Clear category tags button
                         FilledButton.tonal(
                           onPressed: () async {
-                            final confirm = await _confirm(
+                            final confirm = await showConfirmation(
                               context,
-                              'Clear category tags',
-                              'Unset category tag from all tasks (keeps the tasks).',
+                              title: 'Clear category tags',
+                              content:
+                                  'Unset category tag from all tasks (keeps the tasks).',
                             );
                             if (confirm == true) {
                               try {
@@ -421,27 +354,19 @@ class _ManageAllPageState extends State<ManageAllPage> {
                                   deleteTasks: false,
                                 );
                                 if (mounted) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                      content: Text('Category tags cleared'),
-                                    ),
+                                  showSuccessSnackBar(
+                                    context,
+                                    'Category tags cleared',
                                   );
                                 }
                               } catch (e) {
                                 if (mounted) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text('Error: $e'),
-                                      backgroundColor: Theme.of(
-                                        context,
-                                      ).colorScheme.error,
-                                    ),
-                                  );
+                                  showErrorSnackBar(context, 'Error: $e');
                                 }
                               }
                             }
                           },
-                          child: const Text('Clear all tasks'),
+                          child: const Text('Clear category tags'),
                         ),
 
                         // Delete all tasks button

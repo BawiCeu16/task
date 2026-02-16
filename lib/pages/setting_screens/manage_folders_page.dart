@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:task/constants/app_constants.dart';
 import 'package:task/provider/task_provider.dart';
+import 'package:task/services/index.dart';
 import 'package:task/widgets/icon_mapper.dart';
 
 class ManageFoldersPage extends StatefulWidget {
@@ -10,7 +12,8 @@ class ManageFoldersPage extends StatefulWidget {
   State<ManageFoldersPage> createState() => _ManageFoldersPageState();
 }
 
-class _ManageFoldersPageState extends State<ManageFoldersPage> {
+class _ManageFoldersPageState extends State<ManageFoldersPage>
+    with ConfirmationMixin, SnackBarMixin {
   String? _renamingFolder;
   final _renameController = TextEditingController();
   final _renameFormKey = GlobalKey<FormState>();
@@ -37,47 +40,15 @@ class _ManageFoldersPageState extends State<ManageFoldersPage> {
     try {
       provider.renameFolder(oldName, newName);
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Renamed "$oldName" to "$newName"')),
-        );
+        showSuccessSnackBar(context, 'Renamed "$oldName" to "$newName"');
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Error: $e'),
-            backgroundColor: Theme.of(context).colorScheme.error,
-          ),
-        );
+        showErrorSnackBar(context, 'Error: $e');
       }
     } finally {
       _exitRenameMode();
     }
-  }
-
-  Future<bool?> _confirm(String title, String body) {
-    return showDialog<bool>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text(title),
-        content: Text(body),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, false),
-            child: const Text('Cancel'),
-          ),
-          FilledButton(
-            style: ButtonStyle(
-              backgroundColor: WidgetStatePropertyAll(
-                Theme.of(ctx).colorScheme.error,
-              ),
-            ),
-            onPressed: () => Navigator.pop(ctx, true),
-            child: const Text('Confirm'),
-          ),
-        ],
-      ),
-    );
   }
 
   @override
@@ -95,9 +66,10 @@ class _ManageFoldersPageState extends State<ManageFoldersPage> {
               icon: Icon(remixIcon(Icons.delete_sweep_outlined)),
               tooltip: 'Delete all folders',
               onPressed: () async {
-                final confirm = await _confirm(
-                  'Delete all folders',
-                  'This will remove all folders. Do you also want to delete tasks inside them?',
+                final confirm = await showConfirmation(
+                  context,
+                  title: AppConstants.confirmDeleteAllFolders,
+                  content: 'Do you also want to delete tasks inside them?',
                 );
                 if (confirm == true) {
                   final deleteTasks = await showDialog<bool>(
@@ -122,18 +94,11 @@ class _ManageFoldersPageState extends State<ManageFoldersPage> {
                   try {
                     provider.deleteAllFolders(deleteTasks: deleteTasks);
                     if (mounted) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('All folders cleared')),
-                      );
+                      showSuccessSnackBar(context, 'All folders cleared');
                     }
                   } catch (e) {
                     if (mounted) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text('Error: $e'),
-                          backgroundColor: Theme.of(context).colorScheme.error,
-                        ),
-                      );
+                      showErrorSnackBar(context, 'Error: $e');
                     }
                   }
                 }
@@ -214,20 +179,17 @@ class _ManageFoldersPageState extends State<ManageFoldersPage> {
                                 if (v == 'rename') {
                                   _startRenameMode(folder);
                                 } else if (v == 'delete') {
-                                  final ok = await _confirm(
-                                    'Delete Folder',
-                                    'Delete "$folder" and its tasks?',
+                                  final ok = await showConfirmation(
+                                    context,
+                                    title: 'Delete Folder',
+                                    content: 'Delete "$folder" and its tasks?',
                                   );
                                   if (ok == true) {
                                     try {
                                       provider.deleteFolder(folder);
                                     } catch (e) {
                                       if (mounted) {
-                                        ScaffoldMessenger.of(
-                                          context,
-                                        ).showSnackBar(
-                                          SnackBar(content: Text('Error: $e')),
-                                        );
+                                        showErrorSnackBar(context, 'Error: $e');
                                       }
                                     }
                                   }

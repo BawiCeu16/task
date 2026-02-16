@@ -11,6 +11,23 @@
 - **AI-Powered Development** - Built using VS Code with AI Agent assistance for intelligent development
 - **Antigravity Integration** - Advanced floating UI elements and dynamic interactions
 
+## Code Structure & Maintenance
+
+This project follows clean code principles with:
+- **Reusable Components** - Centralized widget library in `lib/widgets/common/`
+- **Constants System** - All styling constants in `lib/constants/app_constants.dart`
+- **Best Practices** - Organized patterns for dialogs, forms, and UI components
+
+📖 **For Development**: See [DEVELOPER_GUIDE.md](DEVELOPER_GUIDE.md) for architecture details and component usage.
+📋 **For Cleanup Details**: See [CLEANUP_SUMMARY.md](CLEANUP_SUMMARY.md) and [REFACTORING.md](REFACTORING.md)
+
+Key reusable components:
+- `ColorPicker` - Color selection for any dialog
+- `IconPicker` - Icon selection for folders/categories
+- `ConfirmationDialog` - Standardized delete/confirm dialogs
+- `BottomSheetAction` - Consistent action menus
+- Dialog utilities for common patterns
+
 ## Getting Started
 
 ### Prerequisites

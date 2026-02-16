@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:task/constants/app_constants.dart';
 import 'package:task/provider/task_provider.dart';
-import 'package:task/widgets/icon_mapper.dart';
+import 'package:task/widgets/common/color_picker.dart';
+import 'package:task/widgets/common/icon_picker.dart';
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 
@@ -18,17 +20,6 @@ class _CreateFolderDialogState extends State<CreateFolderDialog> {
   String? _selectedImage;
   int? _selectedColor;
 
-  final List<Map<String, IconData>> _icons = [
-    {'Folder': Icons.folder},
-    {'Work': Icons.work},
-    {'Home': Icons.home},
-    {'Person': Icons.person},
-    {'Settings': Icons.settings},
-    {'Heart': Icons.favorite},
-    {'Star': Icons.star},
-    {'Music': Icons.music_note},
-  ];
-
   @override
   void dispose() {
     _c.dispose();
@@ -38,7 +29,9 @@ class _CreateFolderDialogState extends State<CreateFolderDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      shape: RoundedRectangleBorder(
+        borderRadius: AppConstants.dialogBorderRadius,
+      ),
       title: const Text('Create folder'),
 
       content: SingleChildScrollView(
@@ -51,93 +44,45 @@ class _CreateFolderDialogState extends State<CreateFolderDialog> {
               decoration: const InputDecoration(hintText: 'Folder name'),
             ),
             const SizedBox(height: 16),
-            const Text('Select Icon or Image'),
-            const SizedBox(height: 8),
-            // Icons Grid
-            Wrap(
-              spacing: 8,
-              runSpacing: 8,
-              children: [
-                ..._icons.map((e) {
-                  final iconVal = e.values.first.codePoint;
-                  final isSelected =
-                      _selectedIcon == iconVal && _selectedImage == null;
-                  return InkWell(
-                    onTap: () {
-                      setState(() {
-                        _selectedIcon = iconVal;
-                        _selectedImage = null;
-                      });
-                    },
-                    borderRadius: BorderRadius.circular(50),
-                    child: Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color: isSelected
-                            ? Theme.of(context).colorScheme.primaryContainer
-                            : null,
-                        shape: BoxShape.circle,
-                        border: isSelected
-                            ? Border.all(
-                                color: Theme.of(context).colorScheme.primary,
-                                width: 2,
-                              )
-                            : null,
-                      ),
-                      child: Icon(remixIcon(e.values.first)),
-                    ),
-                  );
-                }),
-                // Pick Image button
-                InkWell(
-                  onTap: _pickImage,
-                  borderRadius: BorderRadius.circular(50),
-                  child: Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      border: _selectedImage != null
-                          ? Border.all(
-                              color: Theme.of(context).colorScheme.primary,
-                              width: 2,
-                            )
-                          : Border.all(color: Colors.grey),
-                    ),
-                    child: _selectedImage != null
-                        ? ClipOval(
-                            child: Image.file(
-                              File(_selectedImage!),
-                              width: 24,
-                              height: 24,
-                              fit: BoxFit.cover,
-                            ),
-                          )
-                        : Icon(remixIcon(Icons.image)),
-                  ),
-                ),
-              ],
+            // Icon Picker
+            IconPicker(
+              selectedIcon: _selectedIcon,
+              onIconSelected: (iconVal) {
+                setState(() {
+                  _selectedIcon = iconVal;
+                  _selectedImage = null;
+                });
+              },
+              availableIcons: AppConstants.defaultFolderIcons,
+              label: 'Select Icon or Image',
             ),
             const SizedBox(height: 16),
-            const Text('Select Color'),
-            const SizedBox(height: 8),
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              physics: const BouncingScrollPhysics(),
-              child: Row(
-                children: [
-                  _buildColorOption(null),
-                  _buildColorOption(Colors.red.value),
-                  _buildColorOption(Colors.orange.value),
-                  _buildColorOption(Colors.yellow.shade700.value),
-                  _buildColorOption(Colors.green.value),
-                  _buildColorOption(Colors.blue.value),
-                  _buildColorOption(Colors.indigo.value),
-                  _buildColorOption(Colors.purple.value),
-                  _buildColorOption(Colors.pink.value),
-                  _buildColorOption(Colors.brown.value),
-                  _buildColorOption(Colors.grey.value),
-                ],
+            // Image picker button
+            if (_selectedImage != null)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 16.0),
+                child: ClipOval(
+                  child: Image.file(
+                    File(_selectedImage!),
+                    width: 100,
+                    height: 100,
+                    fit: BoxFit.cover,
+                  ),
+                ),
               ),
+            FilledButton.tonal(
+              onPressed: _pickImage,
+              child: const Text('Pick Image from Gallery'),
+            ),
+            const SizedBox(height: 16),
+            // Color Picker
+            ColorPicker(
+              selectedColor: _selectedColor,
+              onColorSelected: (color) =>
+                  setState(() => _selectedColor = color),
+              availableColors: AppConstants.availableColors,
+              label: 'Select Color',
+              showLabel: true,
             ),
           ],
         ),
@@ -179,34 +124,5 @@ class _CreateFolderDialogState extends State<CreateFolderDialog> {
         });
       }
     }
-  }
-
-  Widget _buildColorOption(int? color) {
-    final isSelected = _selectedColor == color;
-    return GestureDetector(
-      onTap: () => setState(() => _selectedColor = color),
-      child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 4),
-        width: 32,
-        height: 32,
-        decoration: BoxDecoration(
-          color: color != null ? Color(color) : Colors.transparent,
-          shape: BoxShape.circle,
-          border: Border.all(
-            color: isSelected
-                ? Theme.of(context).colorScheme.primary
-                : Theme.of(context).disabledColor,
-            width: isSelected ? 3 : 1,
-          ),
-        ),
-        child: color == null
-            ? Icon(
-                remixIcon(Icons.block),
-                size: 16,
-                color: Theme.of(context).disabledColor,
-              )
-            : null,
-      ),
-    );
   }
 }

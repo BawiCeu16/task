@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:task/constants/app_constants.dart';
 import 'package:task/provider/task_provider.dart';
 import 'package:task/widgets/create_folder_dialog.dart';
 import 'package:task/widgets/create_category_dialog.dart';
 import 'package:task/widgets/icon_mapper.dart';
+import 'package:task/widgets/common/color_picker.dart';
 
 /// onTapSave: (String taskName, bool isDone, String? folder, String? category)
 class MyCreateDialog extends StatefulWidget {
@@ -60,7 +62,9 @@ class _MyCreateDialogState extends State<MyCreateDialog> {
         (widget.initialText != null && widget.initialText!.isNotEmpty);
 
     return AlertDialog(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      shape: RoundedRectangleBorder(
+        borderRadius: AppConstants.dialogBorderRadius,
+      ),
       title: Text(isEditing ? 'Edit Task' : 'Create Task'),
       content: SingleChildScrollView(
         child: Column(
@@ -153,25 +157,12 @@ class _MyCreateDialogState extends State<MyCreateDialog> {
               ),
             ),
             const SizedBox(height: 12),
-            // Color picker
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              physics: const BouncingScrollPhysics(),
-              child: Row(
-                children: [
-                  _buildColorOption(null),
-                  _buildColorOption(Colors.red.value),
-                  _buildColorOption(Colors.orange.value),
-                  _buildColorOption(Colors.yellow.shade700.value),
-                  _buildColorOption(Colors.green.value),
-                  _buildColorOption(Colors.blue.value),
-                  _buildColorOption(Colors.indigo.value),
-                  _buildColorOption(Colors.purple.value),
-                  _buildColorOption(Colors.pink.value),
-                  _buildColorOption(Colors.brown.value),
-                  _buildColorOption(Colors.grey.value),
-                ],
-              ),
+            // Color picker - using reusable ColorPicker widget
+            ColorPicker(
+              selectedColor: _color,
+              onColorSelected: (color) => setState(() => _color = color),
+              label: 'Select Color',
+              showLabel: true,
             ),
           ],
         ),
@@ -211,34 +202,5 @@ class _MyCreateDialogState extends State<MyCreateDialog> {
       builder: (dctx) => const CreateCategoryDialog(),
     );
     if (mounted) setState(() {}); // refresh dropdown items after creating
-  }
-
-  Widget _buildColorOption(int? color) {
-    final isSelected = _color == color;
-    return GestureDetector(
-      onTap: () => setState(() => _color = color),
-      child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 4),
-        width: 32,
-        height: 32,
-        decoration: BoxDecoration(
-          color: color != null ? Color(color) : Colors.transparent,
-          shape: BoxShape.circle,
-          border: Border.all(
-            color: isSelected
-                ? Theme.of(context).colorScheme.primary
-                : Theme.of(context).disabledColor,
-            width: isSelected ? 3 : 1,
-          ),
-        ),
-        child: color == null
-            ? Icon(
-                remixIcon(Icons.block),
-                size: 16,
-                color: Theme.of(context).disabledColor,
-              )
-            : null,
-      ),
-    );
   }
 }
